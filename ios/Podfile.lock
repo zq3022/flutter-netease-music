@@ -1,53 +1,69 @@
 PODS:
   - Flutter (1.0.0)
+  - mixin_logger (0.0.1):
+    - Flutter
   - music_player (0.0.1):
     - Flutter
     - SwiftAudioEx (~> 0.15.3)
-  - path_provider_ios (0.0.1):
+  - path_provider_foundation (0.0.1):
     - Flutter
-  - shared_preferences_ios (0.0.1):
+    - FlutterMacOS
+  - sqlite3 (3.44.0):
+    - sqlite3/common (= 3.44.0)
+  - sqlite3/common (3.44.0)
+  - sqlite3/fts5 (3.44.0):
+    - sqlite3/common
+  - sqlite3/perf-threadsafe (3.44.0):
+    - sqlite3/common
+  - sqlite3/rtree (3.44.0):
+    - sqlite3/common
+  - sqlite3_flutter_libs (0.0.1):
     - Flutter
+    - sqlite3 (~> 3.44.0)
+    - sqlite3/fts5
+    - sqlite3/perf-threadsafe
+    - sqlite3/rtree
   - SwiftAudioEx (0.15.3)
-  - system_clock (0.0.1):
-    - Flutter
   - url_launcher_ios (0.0.1):
     - Flutter
 
 DEPENDENCIES:
   - Flutter (from `Flutter`)
+  - mixin_logger (from `.symlinks/plugins/mixin_logger/ios`)
   - music_player (from `.symlinks/plugins/music_player/ios`)
-  - path_provider_ios (from `.symlinks/plugins/path_provider_ios/ios`)
-  - shared_preferences_ios (from `.symlinks/plugins/shared_preferences_ios/ios`)
-  - system_clock (from `.symlinks/plugins/system_clock/ios`)
+  - path_provider_foundation (from `.symlinks/plugins/path_provider_foundation/darwin`)
+  - sqlite3_flutter_libs (from `.symlinks/plugins/sqlite3_flutter_libs/ios`)
   - url_launcher_ios (from `.symlinks/plugins/url_launcher_ios/ios`)
 
 SPEC REPOS:
   trunk:
+    - sqlite3
     - SwiftAudioEx
 
 EXTERNAL SOURCES:
   Flutter:
     :path: Flutter
+  mixin_logger:
+    :path: ".symlinks/plugins/mixin_logger/ios"
   music_player:
     :path: ".symlinks/plugins/music_player/ios"
-  path_provider_ios:
-    :path: ".symlinks/plugins/path_provider_ios/ios"
-  shared_preferences_ios:
-    :path: ".symlinks/plugins/shared_preferences_ios/ios"
-  system_clock:
-    :path: ".symlinks/plugins/system_clock/ios"
+  path_provider_foundation:
+    :path: ".symlinks/plugins/path_provider_foundation/darwin"
+  sqlite3_flutter_libs:
+    :path: ".symlinks/plugins/sqlite3_flutter_libs/ios"
   url_launcher_ios:
     :path: ".symlinks/plugins/url_launcher_ios/ios"
 
 SPEC CHECKSUMS:
   Flutter: f04841e97a9d0b0a8025694d0796dd46242b2854
+  mixin_logger: 0a3c5fea7ff75f29e3295ad898ca24b71ba83651
   music_player: 2cb8e84bc904013b04392560f0b94d1e96e71e14
-  path_provider_ios: 14f3d2fd28c4fdb42f44e0f751d12861c43cee02
-  shared_preferences_ios: 548a61f8053b9b8a49ac19c1ffbc8b92c50d68ad
+  path_provider_foundation: 29f094ae23ebbca9d3d0cec13889cd9060c0e943
+  sqlite3: 6e2d4a4879854d0ec86b476bf3c3e30870bac273
+  sqlite3_flutter_libs: eb769059df0356dc52ddda040f09cacc9391a7cf
   SwiftAudioEx: 83eabba2940924fc1c0d5cb0896049921365229c
-  system_clock: 3efb51d18e565092e2a97bc605c6255f328bd13a
-  url_launcher_ios: 839c58cdb4279282219f5e248c3321761ff3c4de
+  url_launcher_ios: 68d46cc9766d0c41dbdc884310529557e3cd7a86
 
 PODFILE CHECKSUM: 7368163408c647b7eb699d0d788ba6718e18fb8d
 
-COCOAPODS: 1.11.3
+COCOAPODS: 1.14.3
