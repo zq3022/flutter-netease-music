@@ -1,6 +1,5 @@
 import 'package:json_annotation/json_annotation.dart';
-
-import 'track.dart';
+import 'package:music_api/music_api.dart';
 
 part 'cloud_tracks_detail.g.dart';
 

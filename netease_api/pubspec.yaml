@@ -21,6 +21,9 @@ dependencies:
       ref: 47684bc8b75bf37ad3201993a9e3db0b5fe64ec3
   json_annotation: ^4.3.0
   async: ^2.9.0
+  music_api:
+    path: ../music_api/
+  common_utils: ^2.1.0
 
 dev_dependencies:
   flutter_test:

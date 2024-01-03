@@ -1,7 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:music_api/music_api.dart';
 
 import '../db/enum/key_value_group.dart';
-import '../navigation/common/player/lyric.dart';
 import '../repository.dart';
 import '../utils/db/db_key_value.dart';
 import 'database_provider.dart';

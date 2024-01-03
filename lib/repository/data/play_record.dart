@@ -1,6 +1,6 @@
 import 'package:equatable/equatable.dart';
 import 'package:json_annotation/json_annotation.dart';
-import '../../repository.dart';
+import 'package:music_api/music_api.dart';
 
 part 'play_record.g.dart';
 

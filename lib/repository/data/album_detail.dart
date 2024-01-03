@@ -1,7 +1,6 @@
 import 'package:equatable/equatable.dart';
 import 'package:json_annotation/json_annotation.dart';
-
-import 'track.dart';
+import 'package:music_api/music_api.dart';
 
 part 'album_detail.g.dart';
 

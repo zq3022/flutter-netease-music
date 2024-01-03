@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mixin_logger/mixin_logger.dart';
+import 'package:music_api/music_api.dart';
 
 import '../../../extension.dart';
 import '../../../media/tracks/track_list.dart';

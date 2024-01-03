@@ -1,12 +1,18 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:async/async.dart' show Result, ErrorResult;
+import 'package:common_utils/common_utils.dart';
 import 'package:cookie_jar/cookie_jar.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:music_api/music_api.dart';
 import 'package:netease_music_api/netease_cloud_music.dart' as api;
 
 import '../netease_api.dart';
+import 'ao/search_result_songs.dart';
+
+const int _origin_ = 1;
 
 ///enum for NeteaseRepository.search param type
 class SearchType {
@@ -80,7 +86,7 @@ extension _FutureMapExtension<T> on Future<Result<T>> {
 
 typedef OnRequestError = void Function(ErrorResult error);
 
-class Repository {
+class Repository extends MusicApi {
   Repository(String cookiePath, {this.onError}) {
     api.debugPrint = debugPrint;
     scheduleMicrotask(() async {
@@ -93,6 +99,18 @@ class Repository {
       _cookieJar.complete(cookieJar);
     });
   }
+
+  @override
+  int get origin => _origin_;
+
+  @override
+  String get name => '网易云';
+
+  @override
+  String get package => 'netease_api';
+
+  @override
+  String get icon => 'assets/icon.ico';
 
   final Completer<PersistCookieJar> _cookieJar = Completer();
 
@@ -240,7 +258,8 @@ class Repository {
     return _map(response, (t) => DailyRecommendSongs.fromJson(t['data']));
   }
 
-  ///根据音乐id获取歌词
+  //根据音乐id获取歌词
+  @override
   Future<String?> lyric(int id) async {
     final result = await doRequest('/lyric', {'id': id});
     if (result.isError) {
@@ -252,6 +271,30 @@ class Repository {
     }
     return lyc['lyric'];
   }
+
+  // ///根据音乐id获取歌词
+  // @override
+  // Future<LyricContent?> lyric(Track track) {
+  //   return doRequest('/lyric', {'id': track.id}).then((value) {
+  //     final Map? lyc = value.asValue?.value['lrc'];
+  //     final Map? tlyc = value.asValue?.value['tlyric'];
+  //     if (lyc == null) {
+  //       return null;
+  //     }
+  //     String? res = lyc['lyric'];
+  //     String? tres;
+  //     if (tlyc != null && res != null && (tres = tlyc['lyric']) != null) {
+  //       // 有中文歌词，尝试合并
+
+  //       final ly = LyricContent.from(res);
+  //       final tly = LyricContent.from(tres!);
+
+  //       return ly.contact(tly);
+  //     }
+
+  //     return res == null ? null : LyricContent.from(res);
+  //   });
+  // }
 
   ///获取搜索热词
   Future<Result<List<String>>> searchHotWords() async {
@@ -289,6 +332,27 @@ class Repository {
     return result.map((t) => SearchResultSongs.fromJson(t['result']));
   }
 
+  @override
+  Future<PageResult<Track>> searchMusic(
+    String keyword, {
+    int limit = 20,
+    int offset = 0,
+  }) async {
+    final result =
+        await search(keyword, SearchType.song, limit: limit, offset: offset);
+    final r = result.map((t) => SearchResultSongs.fromJson(t['result']));
+
+    if (r.isError) {
+      return Future.error(r.asError!.error);
+    }
+
+    return Future.value(PageResult(
+        data:
+            r.asValue!.value.songs.map((e) => e.toTrack(e.privilege)).toList(),
+        total: r.asValue!.value.songCount,
+        hasMore: r.asValue!.value.hasMore));
+  }
+
   ///搜索建议
   ///返回搜索建议列表，结果一定不会为null
   Future<Result<List<String>>> searchSuggest(String? keyword) async {
@@ -321,6 +385,20 @@ class Repository {
     return result.isValue && result.asValue!.value['data'][0]['code'] == 200;
   }
 
+  // @override
+  // Future<Track> playUrl(Track track) async {
+  //   final result = await doRequest('/song/url', {'id': track.id});
+  //   if (result.isError) return Future.error(result.asError!.error);
+
+  //   final l = result.asValue!.value['data'] as List;
+  //   if (l.first['url'] == null) {
+  //     return Future.error(PlayDetailException('fail', track));
+  //   }
+  //   track.mp3Url = l.first['url'] as String;
+  //   return Future.value(track);
+  // }
+
+  @override
   Future<Result<String>> getPlayUrl(int id, [int br = 320000]) async {
     final result = await doRequest('/song/url', {'id': id, 'br': br});
     return _map(result, (dynamic result) {
@@ -566,8 +644,8 @@ class Repository {
     }
     assert(
       () {
-        // debugPrint('api request: $path $param');
-        // debugPrint('api response: ${result.status} ${jsonEncode(result.body)}');
+        debugPrint('api request: $path $param');
+        LogUtil.e('api response: ${result.status} ${jsonEncode(result.body)}');
         return true;
       }(),
     );
@@ -593,5 +671,73 @@ class Repository {
       return error;
     }
     return Result.value(map as Map<String, dynamic>);
+  }
+}
+
+// https://github.com/Binaryify/NeteaseCloudMusicApi/issues/899#issuecomment-680002883
+TrackType _trackType({
+  required int fee,
+  required bool cs,
+  required int st,
+}) {
+  if (st == -200) {
+    return TrackType.noCopyright;
+  }
+  if (cs) {
+    return TrackType.cloud;
+  }
+  switch (fee) {
+    case 0:
+    case 8:
+      return TrackType.free;
+    case 4:
+      return TrackType.payAlbum;
+    case 1:
+      return TrackType.vip;
+  }
+  debugPrint('unknown fee: $fee');
+  return TrackType.free;
+}
+
+extension _TrackMapper on TracksItem {
+  Track toTrack(PrivilegesItem? privilege) {
+    final p = privilege ?? this.privilege;
+    return Track(
+      id: id,
+      name: name,
+      artists: ar.map((e) => e.toArtist()).toList(),
+      album: al.toAlbum(),
+      imageUrl: al.picUrl,
+      uri: 'http://music.163.com/song/media/outer/url?id=$id.mp3',
+      duration: Duration(milliseconds: dt),
+      type: _trackType(
+        fee: p?.fee ?? fee,
+        cs: p?.cs ?? false,
+        st: p?.st ?? st,
+      ),
+      file: null,
+      mp3Url: null,
+      origin: _origin_,
+    );
+  }
+}
+
+extension _ArtistItemMapper on ArtistItem {
+  ArtistMini toArtist() {
+    return ArtistMini(
+      id: id,
+      name: name,
+      imageUrl: null,
+    );
+  }
+}
+
+extension _AlbumItemMapper on AlbumItem {
+  AlbumMini toAlbum() {
+    return AlbumMini(
+      id: id,
+      name: name,
+      picUri: picUrl,
+    );
   }
 }

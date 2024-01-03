@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:music_api/music_api.dart';
 
 import '../repository.dart';
 import '../utils/db/db_key_value.dart';

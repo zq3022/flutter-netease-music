@@ -93,8 +93,7 @@ class KeyValue extends DataClass implements Insertable<KeyValue> {
     final map = <String, Expression>{};
     map['key'] = Variable<String>(key);
     {
-      final converter = KeyValues.$convertergroup;
-      map['group'] = Variable<String>(converter.toSql(group));
+      map['group'] = Variable<String>(KeyValues.$convertergroup.toSql(group));
     }
     map['value'] = Variable<String>(value);
     return map;
@@ -209,9 +208,8 @@ class KeyValuesCompanion extends UpdateCompanion<KeyValue> {
       map['key'] = Variable<String>(key.value);
     }
     if (group.present) {
-      final converter = KeyValues.$convertergroup;
-
-      map['group'] = Variable<String>(converter.toSql(group.value));
+      map['group'] =
+          Variable<String>(KeyValues.$convertergroup.toSql(group.value));
     }
     if (value.present) {
       map['value'] = Variable<String>(value.value);

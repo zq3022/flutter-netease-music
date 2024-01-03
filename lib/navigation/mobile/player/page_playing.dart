@@ -1,11 +1,11 @@
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:music_api/music_api.dart';
 
 import '../../../extension.dart';
 import '../../../providers/navigator_provider.dart';
 import '../../../providers/player_provider.dart';
-import '../../../repository.dart';
 import '../../common/buttons.dart';
 import '../../common/material/player.dart';
 import '../../common/player/cover.dart';

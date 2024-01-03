@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart' hide SearchBar;
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:music_api/music_api.dart';
 
 import '../../../extension.dart';
 import '../../../providers/navigator_provider.dart';
 import '../../../providers/search_provider.dart';
-import '../../../repository/data/track.dart';
 import '../../common/navigation_target.dart';
 import '../../common/playlist/track_list_container.dart';
 import '../widgets/track_tile.dart';

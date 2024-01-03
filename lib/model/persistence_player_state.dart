@@ -1,9 +1,9 @@
 import 'package:equatable/equatable.dart';
 import 'package:json_annotation/json_annotation.dart';
+import 'package:music_api/music_api.dart';
 
 import '../media/tracks/track_list.dart';
 import '../media/tracks/tracks_player.dart';
-import '../repository/data/track.dart';
 
 part 'persistence_player_state.g.dart';
 

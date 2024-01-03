@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:music_api/music_api.dart';
 import '../../../extension.dart';
 import '../../../providers/album_detail_provider.dart';
 import '../../../repository.dart';

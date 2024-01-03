@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:music_api/music_api.dart';
 
 import '../../../extension.dart';
 import '../../../providers/navigator_provider.dart';
-import '../../../repository.dart';
 import '../../common/navigation_target.dart';
 import '../../common/player/lyric_view.dart';
 import '../widgets/highlight_clickable_text.dart';

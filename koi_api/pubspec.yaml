@@ -1,0 +1,26 @@
+name: koi_api
+description: the api wrapper of koi service
+version: 0.0.1
+# homepage: https://github.com/boyan01/flutter-netease-music
+
+publish_to: none
+
+environment:
+  sdk: ">=2.14.0"
+  flutter: ">=2.5.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  dio_cookie_manager: ^2.1.1
+  json_annotation: ^4.8.1
+  equatable: ^2.0.3
+  music_api:
+    path: ../music_api/
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^1.0.4
+  build_runner: ^2.1.5
+  json_serializable: ^6.7.1
+

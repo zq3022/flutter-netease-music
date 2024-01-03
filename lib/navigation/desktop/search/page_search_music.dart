@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:music_api/music_api.dart';
 
 import '../../../extension.dart';
 import '../../../providers/search_provider.dart';
-import '../../../repository.dart';
 import '../../common/playlist/track_list_container.dart';
 import '../widgets/track_tile_normal.dart';
 import 'page_search.dart';

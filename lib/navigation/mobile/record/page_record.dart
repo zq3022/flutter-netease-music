@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:loader/loader.dart';
+import 'package:music_api/music_api.dart';
 
-import '../../../repository/data/track.dart';
 import '../../common/material/tabs.dart';
 import '../../common/playlist/track_list_container.dart';
 import '../widgets/track_tile.dart';

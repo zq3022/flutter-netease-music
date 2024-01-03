@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:lychee_player/lychee_player.dart';
 import 'package:mixin_logger/mixin_logger.dart';
+import 'package:music_api/music_api.dart';
 
 import '../../extension.dart';
 import '../../model/persistence_player_state.dart';

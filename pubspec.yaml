@@ -14,7 +14,7 @@ dependencies:
   flutter_localizations:
     sdk: flutter
   cupertino_icons: ^1.0.6
-  json_annotation: ^4.3.0
+  json_annotation: ^4.8.1
   path_provider: ^2.1.1
   url_launcher: ^6.1.14
   intl: ^0.18.0
@@ -32,8 +32,12 @@ dependencies:
   scrollable_positioned_list: ^0.3.5
   flutter_hooks: ^0.20.3
   equatable: ^2.0.3
+  music_api:
+    path: music_api/
   netease_api:
     path: netease_api/
+  koi_api:
+    path: koi_api/
   path: ^1.8.0
   async: ^2.9.0
   riverpod: ^2.4.0
@@ -67,6 +71,7 @@ dependencies:
   dio: any
   drift: ^2.13.1
   sqlite3_flutter_libs: ^0.5.18
+  common_utils: 2.1.0
 
 dev_dependencies:
   flutter_test:

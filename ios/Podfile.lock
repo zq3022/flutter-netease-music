@@ -62,7 +62,7 @@ SPEC CHECKSUMS:
   sqlite3: 6e2d4a4879854d0ec86b476bf3c3e30870bac273
   sqlite3_flutter_libs: eb769059df0356dc52ddda040f09cacc9391a7cf
   SwiftAudioEx: 83eabba2940924fc1c0d5cb0896049921365229c
-  url_launcher_ios: 68d46cc9766d0c41dbdc884310529557e3cd7a86
+  url_launcher_ios: bf5ce03e0e2088bad9cc378ea97fa0ed5b49673b
 
 PODFILE CHECKSUM: 7368163408c647b7eb699d0d788ba6718e18fb8d
 

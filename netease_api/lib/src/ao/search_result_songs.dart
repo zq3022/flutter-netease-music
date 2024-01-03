@@ -1,5 +1,4 @@
 import '../../netease_api.dart';
-
 import 'safe_convert.dart';
 
 class SearchResultSongs {
@@ -14,7 +13,9 @@ class SearchResultSongs {
         songs:
             asList(json, 'songs').map((e) => TracksItem.fromJson(e)).toList(),
         hasMore: asBool(json, 'hasMore'),
-        songCount: asInt(json, 'songCount'),
+        songCount: (json == null || !json.containsKey('totalCount'))
+            ? asInt(json, 'totalCount')
+            : asInt(json, 'songCount'),
       );
 
   final List<TracksItem> songs;

@@ -1,9 +1,9 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:music_api/music_api.dart';
 import 'package:riverpod/riverpod.dart';
 
-import '../repository/data/track.dart';
 import '../utils/db/db_key_value.dart';
 import 'key_value/simple_lazy_ley_value_provider.dart';
 

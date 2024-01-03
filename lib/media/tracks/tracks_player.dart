@@ -3,9 +3,9 @@ import 'dart:io';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:music_api/music_api.dart';
 
 import '../../model/persistence_player_state.dart';
-import '../../repository/data/track.dart';
 import 'track_list.dart';
 import 'tracks_player_impl_lychee.dart';
 import 'tracks_player_impl_mobile.dart';

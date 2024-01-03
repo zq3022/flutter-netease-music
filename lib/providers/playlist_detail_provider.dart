@@ -3,10 +3,10 @@ import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:mixin_logger/mixin_logger.dart';
+import 'package:music_api/music_api.dart';
 
 import '../db/enum/key_value_group.dart';
 import '../repository/data/playlist_detail.dart';
-import '../repository/data/track.dart';
 import '../repository/netease.dart';
 import '../repository/network_repository.dart';
 import '../utils/db/db_key_value.dart';

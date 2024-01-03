@@ -2,11 +2,11 @@ import 'dart:ui' as ui;
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:music_api/music_api.dart';
 
 import '../../../extension.dart';
 import '../../../providers/lyric_provider.dart';
 import '../../../providers/player_provider.dart';
-import '../../../repository.dart';
 import 'lyric.dart';
 import 'progress_track_container.dart';
 

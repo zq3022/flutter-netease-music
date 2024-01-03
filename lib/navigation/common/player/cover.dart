@@ -2,10 +2,10 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:music_api/music_api.dart';
 
 import '../../../media/tracks/tracks_player.dart';
 import '../../../providers/player_provider.dart';
-import '../../../repository/data/track.dart';
 import '../image.dart';
 
 ///播放页面歌曲封面

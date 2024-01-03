@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:mixin_logger/mixin_logger.dart';
+import 'package:music_api/music_api.dart';
 import 'package:music_player/music_player.dart';
 
 import '../../model/persistence_player_state.dart';

@@ -1,8 +1,8 @@
 import 'dart:ui' as ui;
 
 import 'package:flutter/material.dart';
+import 'package:music_api/music_api.dart';
 
-import '../../../repository.dart';
 import '../../common/image.dart';
 
 class BlurBackground extends StatelessWidget {
