@@ -2,33 +2,32 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:async/async.dart';
-import 'package:collection/collection.dart';
 import 'package:dio/dio.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:koi_api/koi_api.dart';
 import 'package:music_api/music_api.dart';
 import 'package:netease_api/netease_api.dart' as netease_api;
+import 'package:netease_api/search_type.dart';
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
 
 import '../repository.dart';
-import '../utils/cache/key_value_cache.dart';
 import 'data/login_qr_key_status.dart';
 import 'data/search_result.dart';
+import 'extensions/album_extension.dart';
+import 'extensions/artist_extension.dart';
+import 'extensions/cloud_track_extension.dart';
+import 'extensions/fm_track_extension.dart';
+import 'extensions/playlist_extension.dart';
+import 'extensions/track_extension.dart';
+import 'extensions/user_detail_extension.dart';
+import 'lyric_cache.dart';
 
 export 'package:netease_api/netease_api.dart'
-    show
-        SearchType,
-        PlaylistOperation,
-        CommentThreadId,
-        CommentType,
-        MusicCount,
-        CellphoneExistenceCheck,
-        PlayRecordType;
+    show CommentThreadId, CommentType, MusicCount, CellphoneExistenceCheck;
 
 class NetworkRepository {
   NetworkRepository(this.cachePath)
-      : _lyricCache = _LyricCache(p.join(cachePath));
+      : _lyricCache = LyricCache(p.join(cachePath));
 
   static void onError(ErrorResult error) {
     if (error.error is netease_api.RequestError) {
@@ -62,7 +61,7 @@ class NetworkRepository {
 
   Stream<void> get onApiUnAuthorized => _onApiUnAuthorized.stream;
 
-  final _LyricCache _lyricCache;
+  final LyricCache _lyricCache;
 
   /// 检查是否需要更新
   /// 需要更新返回新的版本号，否则返回null
@@ -98,20 +97,18 @@ class NetworkRepository {
   Future<String?> lyric(int id) async {
     final lyricString = await musicApiContainer
         .getApi(1)
-        .then((value) => (value as netease_api.Repository).lyric(id));
+        .then((musicApi) => musicApi.lyric(id));
     return lyricString;
   }
 
   Future<Result<List<String>>> searchHotWords() {
-    return musicApiContainer
-        .getApi(1)
-        .then((value) => (value as netease_api.Repository).searchHotWords());
+    return musicApiContainer.getApi(1).then((value) => value.searchHotWords());
   }
 
   ///search by keyword
   Future<Result<Map>> search(
     String? keyword,
-    netease_api.SearchType type, {
+    SearchType type, {
     int limit = 20,
     int offset = 0,
   }) =>
@@ -123,7 +120,7 @@ class NetworkRepository {
       {int limit = 20, int offset = 0, int origin = 1}) async {
     final ret = await musicApiContainer
         .getApi(origin)
-        .then((value) => (value as netease_api.Repository).searchSongs(
+        .then((musicApi) => musicApi.searchSongs(
               keyword,
               limit: limit,
               offset: offset,
@@ -137,19 +134,20 @@ class NetworkRepository {
   }
 
   Future<Result<List<String>>> searchSuggest(String? keyword) =>
-      musicApiContainer.getApi(1).then(
-          (value) => (value as netease_api.Repository).searchSuggest(keyword));
+      musicApiContainer
+          .getApi(1)
+          .then((musicApi) => musicApi.searchSuggest(keyword));
 
   ///edit playlist tracks
   ///true : succeed
   Future<bool> playlistTracksEdit(
-    netease_api.PlaylistOperation operation,
+    PlaylistOperation operation,
     int playlistId,
     List<int?> musicIds,
   ) =>
       musicApiContainer
           .getApi(1)
-          .then((value) => (value as netease_api.Repository).playlistTracksEdit(
+          .then((musicApi) => musicApi.playlistTracksEdit(
                 operation,
                 playlistId,
                 musicIds,
@@ -165,13 +163,11 @@ class NetworkRepository {
     int limit = 20,
     int offset = 0,
   }) =>
-      musicApiContainer
-          .getApi(1)
-          .then((value) => (value as netease_api.Repository).getComments(
-                commentThread,
-                limit: limit,
-                offset: offset,
-              ));
+      musicApiContainer.getApi(1).then((musicApi) => musicApi.getComments(
+            commentThread,
+            limit: limit,
+            offset: offset,
+          ));
 
   // like track.
   Future<bool> like(int? musicId, {required bool like}) =>
@@ -181,22 +177,19 @@ class NetworkRepository {
   // get user licked tracks.
   Future<Result<List<int>>> likedList(int? userId) => musicApiContainer
       .getApi(1)
-      .then((value) => (value as netease_api.Repository).likedList(userId));
+      .then((musicApi) => musicApi.likedList(userId));
 
-  Future<Result<netease_api.MusicCount>> subCount() => musicApiContainer
-      .getApi(1)
-      .then((value) => (value as netease_api.Repository).subCount());
+  Future<Result<netease_api.MusicCount>> subCount() =>
+      musicApiContainer.getApi(1).then((musicApi) => musicApi.subCount());
 
   Future<Result<netease_api.CellphoneExistenceCheck>> checkPhoneExist(
     String phone,
     String countryCode,
   ) =>
-      musicApiContainer
-          .getApi(1)
-          .then((value) => (value as netease_api.Repository).checkPhoneExist(
-                phone,
-                countryCode,
-              ));
+      musicApiContainer.getApi(1).then((musicApi) => musicApi.checkPhoneExist(
+            phone,
+            countryCode,
+          ));
 
   Future<Result<List<PlaylistDetail>>> userPlaylist(
     int? userId, {
@@ -205,7 +198,7 @@ class NetworkRepository {
   }) async {
     final ret = await musicApiContainer
         .getApi(1)
-        .then((value) => (value as netease_api.Repository).userPlaylist(
+        .then((musicApi) => musicApi.userPlaylist(
               userId,
               offset: offset,
               limit: limit,
@@ -223,8 +216,9 @@ class NetworkRepository {
     int id, {
     int s = 5,
   }) async {
-    final ret = await musicApiContainer.getApi(1).then(
-        (value) => (value as netease_api.Repository).playlistDetail(id, s: s));
+    final ret = await musicApiContainer
+        .getApi(1)
+        .then((musicApi) => musicApi.playlistDetail(id, s: s));
     if (ret.isError) {
       return ret.asError!;
     }
@@ -235,7 +229,7 @@ class NetworkRepository {
   Future<Result<AlbumDetail>> albumDetail(int id) async {
     final ret = await musicApiContainer
         .getApi(1)
-        .then((value) => (value as netease_api.Repository).albumDetail(id));
+        .then((musicApi) => musicApi.albumDetail(id));
     if (ret.isError) {
       return ret.asError!;
     }
@@ -249,14 +243,12 @@ class NetworkRepository {
   }
 
   Future<Result<netease_api.MusicVideoDetailResult>> mvDetail(int mvId) =>
-      musicApiContainer
-          .getApi(1)
-          .then((value) => (value as netease_api.Repository).mvDetail(mvId));
+      musicApiContainer.getApi(1).then((musicApi) => musicApi.mvDetail(mvId));
 
   Future<Result<ArtistDetail>> artist(int id) async {
     final ret = await musicApiContainer
         .getApi(1)
-        .then((value) => (value as netease_api.Repository).artist(id));
+        .then((musicApi) => musicApi.artist(id));
     if (ret.isError) {
       return ret.asError!;
     }
@@ -277,7 +269,7 @@ class NetworkRepository {
   }) async {
     final ret = await musicApiContainer
         .getApi(1)
-        .then((value) => (value as netease_api.Repository).artistAlbums(
+        .then((musicApi) => musicApi.artistAlbums(
               artistId,
               limit: limit,
               offset: offset,
@@ -295,29 +287,27 @@ class NetworkRepository {
     int limit = 20,
     int offset = 0,
   }) =>
-      musicApiContainer
-          .getApi(1)
-          .then((value) => (value as netease_api.Repository).artistMvs(
-                artistId,
-                limit: limit,
-                offset: offset,
-              ));
+      musicApiContainer.getApi(1).then((musicApi) => musicApi.artistMvs(
+            artistId,
+            limit: limit,
+            offset: offset,
+          ));
 
   // FIXME
   Future<Result<Map>> artistDesc(int artistId) => musicApiContainer
       .getApi(1)
-      .then((value) => (value as netease_api.Repository).artistDesc(artistId));
+      .then((musicApi) => musicApi.artistDesc(artistId));
 
-  Future<Result<netease_api.TopListDetail>> topListDetail() => musicApiContainer
-      .getApi(1)
-      .then((value) => (value as netease_api.Repository).topListDetail());
+  Future<Result<netease_api.TopListDetail>> topListDetail() =>
+      musicApiContainer.getApi(1).then((musicApi) => musicApi.topListDetail());
 
   Future<Result<List<PlayRecord>>> getRecord(
     int userId,
-    netease_api.PlayRecordType type,
+    PlayRecordType type,
   ) async {
-    final records = await musicApiContainer.getApi(1).then(
-        (value) => (value as netease_api.Repository).getRecord(userId, type));
+    final records = await musicApiContainer
+        .getApi(1)
+        .then((musicApi) => musicApi.getRecord(userId, type));
     if (records.isError) {
       return records.asError!;
     }
@@ -336,16 +326,16 @@ class NetworkRepository {
   }
 
   // FIXME
-  Future<Result<List<Map>>> djSubList() => musicApiContainer
-      .getApi(1)
-      .then((value) => (value as netease_api.Repository).djSubList());
+  Future<Result<List<Map>>> djSubList() =>
+      musicApiContainer.getApi(1).then((musicApi) => musicApi.djSubList());
 
   Future<Result<List<Map>>> userDj(int? userId) async =>
       Result.error('not implement');
 
   Future<Result<List<Track>>> personalizedNewSong() async {
-    final ret = await musicApiContainer.getApi(1).then(
-        (value) => (value as netease_api.Repository).personalizedNewSong());
+    final ret = await musicApiContainer
+        .getApi(1)
+        .then((musicApi) => musicApi.personalizedNewSong());
     if (ret.isError) {
       return ret.asError!;
     }
@@ -361,7 +351,7 @@ class NetworkRepository {
   }) async {
     final ret = await musicApiContainer
         .getApi(1)
-        .then((value) => (value as netease_api.Repository).personalizedPlaylist(
+        .then((musicApi) => musicApi.personalizedPlaylist(
               limit: limit,
               offset: offset,
             ));
@@ -389,7 +379,7 @@ class NetworkRepository {
   Future<Result<List<Track>>> songDetails(List<int> ids) async {
     final ret = await musicApiContainer
         .getApi(1)
-        .then((value) => (value as netease_api.Repository).songDetails(ids));
+        .then((musicApi) => musicApi.songDetails(ids));
     if (ret.isError) {
       return ret.asError!;
     }
@@ -407,23 +397,21 @@ class NetworkRepository {
           (value as netease_api.Repository)
               .mvSubscribe(mvId, subscribe: subscribe));
 
-  Future<bool> refreshLogin() => musicApiContainer
-      .getApi(1)
-      .then((value) => (value as netease_api.Repository).refreshLogin());
+  Future<bool> refreshLogin() =>
+      musicApiContainer.getApi(1).then((musicApi) => musicApi.refreshLogin());
 
-  Future<void> logout() => musicApiContainer
-      .getApi(1)
-      .then((value) => (value as netease_api.Repository).logout());
+  Future<void> logout() =>
+      musicApiContainer.getApi(1).then((musicApi) => musicApi.logout());
 
   // FIXME
-  Future<Result<Map>> login(String? phone, String password) =>
-      musicApiContainer.getApi(1).then(
-          (value) => (value as netease_api.Repository).login(phone, password));
+  Future<Result<Map>> login(String? phone, String password) => musicApiContainer
+      .getApi(0)
+      .then((musicApi) => musicApi.login(phone, password));
 
   Future<Result<User>> getUserDetail(int uid) async {
     final ret = await musicApiContainer
         .getApi(1)
-        .then((value) => (value as netease_api.Repository).getUserDetail(uid));
+        .then((musicApi) => musicApi.getUserDetail(uid));
     if (ret.isError) {
       return ret.asError!;
     }
@@ -434,7 +422,7 @@ class NetworkRepository {
   Future<Result<List<Track>>> recommendSongs() async {
     final ret = await musicApiContainer
         .getApi(1)
-        .then((value) => (value as netease_api.Repository).recommendSongs());
+        .then((musicApi) => musicApi.recommendSongs());
     if (ret.isError) {
       return ret.asError!;
     }
@@ -449,12 +437,12 @@ class NetworkRepository {
           // .getApi(track.origin)
           // .then((value) => value.playUrl(track));
           .getApi(1)
-          .then(
-              (value) => (value as netease_api.Repository).getPlayUrl(id, br));
+          .then((musicApi) => musicApi.getPlayUrl(id, br));
 
   Future<Result<List<Track>>> getPersonalFmMusics() async {
-    final ret = await musicApiContainer.getApi(1).then(
-        (value) => (value as netease_api.Repository).getPersonalFmMusics());
+    final ret = await musicApiContainer
+        .getApi(1)
+        .then((musicApi) => musicApi.getPersonalFmMusics());
     if (ret.isError) {
       return ret.asError!;
     }
@@ -465,7 +453,7 @@ class NetworkRepository {
   Future<CloudTracksDetail> getUserCloudTracks() async {
     final ret = await musicApiContainer
         .getApi(1)
-        .then((value) => (value as netease_api.Repository).getUserCloudMusic());
+        .then((musicApi) => musicApi.getUserCloudMusic());
     final value = await ret.asFuture;
     return CloudTracksDetail(
       maxSize: int.tryParse(value.maxSize) ?? 0,
@@ -478,7 +466,7 @@ class NetworkRepository {
   Future<String> loginQrKey() async {
     final ret = await musicApiContainer
         .getApi(1)
-        .then((value) => (value as netease_api.Repository).loginQrKey());
+        .then((musicApi) => musicApi.loginQrKey());
     final data = ret.asValue!.value;
     return data['unikey'];
   }
@@ -486,7 +474,7 @@ class NetworkRepository {
   Future<LoginQrKeyStatus> checkLoginQrKey(String key) async {
     final code = await musicApiContainer
         .getApi(1)
-        .then((value) => (value as netease_api.Repository).loginQrCheck(key));
+        .then((musicApi) => musicApi.loginQrCheck(key));
     switch (code) {
       case 800:
         return LoginQrKeyStatus.expired;
@@ -500,16 +488,16 @@ class NetworkRepository {
     throw Exception('unknown error');
   }
 
-  Future<Map> getLoginStatus() => musicApiContainer
-      .getApi(1)
-      .then((value) => (value as netease_api.Repository).loginStatus());
+  Future<Map> getLoginStatus() =>
+      musicApiContainer.getApi(1).then((musicApi) => musicApi.loginStatus());
 
   Future<List<Track>> playModeIntelligenceList({
     required int id,
     required int playlistId,
   }) async {
-    final ret = await musicApiContainer.getApi(1).then(
-        (value) => (value as netease_api.Repository).playModeIntelligenceList(
+    final ret = await musicApiContainer
+        .getApi(1)
+        .then((musicApi) => musicApi.playModeIntelligenceList(
               id: id,
               playlistId: playlistId,
             ));
@@ -522,310 +510,5 @@ class NetworkRepository {
           ),
         )
         .toList();
-  }
-}
-
-// https://github.com/Binaryify/NeteaseCloudMusicApi/issues/899#issuecomment-680002883
-TrackType _trackType({
-  required int fee,
-  required bool cs,
-  required int st,
-}) {
-  if (st == -200) {
-    return TrackType.noCopyright;
-  }
-  if (cs) {
-    return TrackType.cloud;
-  }
-  switch (fee) {
-    case 0:
-    case 8:
-      return TrackType.free;
-    case 4:
-      return TrackType.payAlbum;
-    case 1:
-      return TrackType.vip;
-  }
-  debugPrint('unknown fee: $fee');
-  return TrackType.free;
-}
-
-extension _CloudTrackMapper on netease_api.CloudSongItem {
-  Track toTrack() {
-    final album = AlbumMini(
-      id: simpleSong.al.id,
-      picUri: simpleSong.al.picUrl,
-      name: simpleSong.al.name ?? this.album,
-    );
-    ArtistMini mapArtist(netease_api.SimpleSongArtistItem item) {
-      return ArtistMini(
-        id: item.id,
-        name: item.name ?? artist,
-        imageUrl: '',
-      );
-    }
-
-    return Track(
-      id: songId,
-      name: songName,
-      album: album,
-      duration: Duration(milliseconds: simpleSong.dt),
-      type: _trackType(fee: simpleSong.fee, cs: true, st: simpleSong.st),
-      artists: simpleSong.ar.map(mapArtist).toList(),
-      uri: '',
-      imageUrl: album.picUri,
-      file: null,
-      mp3Url: null,
-      origin: 1,
-    );
-  }
-}
-
-extension _FmTrackMapper on netease_api.FmTrackItem {
-  Track toTrack(netease_api.Privilege privilege) => Track(
-        id: id,
-        name: name,
-        artists: artists.map((e) => e.toArtist()).toList(),
-        album: album.toAlbum(),
-        imageUrl: album.picUrl,
-        uri: 'http://music.163.com/song/media/outer/url?id=$id.mp3',
-        duration: Duration(milliseconds: duration),
-        type:
-            _trackType(fee: privilege.fee, st: privilege.st, cs: privilege.cs),
-        file: null,
-        mp3Url: null,
-        origin: 1,
-      );
-}
-
-extension _FmArtistMapper on netease_api.FmArtist {
-  ArtistMini toArtist() => ArtistMini(
-        id: id,
-        name: name,
-        imageUrl: picUrl,
-      );
-}
-
-extension _FmAlbumMapper on netease_api.FmAlbum {
-  AlbumMini toAlbum() => AlbumMini(
-        id: id,
-        name: name,
-        picUri: picUrl,
-      );
-}
-
-extension _PlayListMapper on netease_api.Playlist {
-  PlaylistDetail toPlaylistDetail(List<netease_api.PrivilegesItem> privileges) {
-    assert(coverImgUrl.isNotEmpty, 'coverImgUrl is empty');
-    final privilegesMap = Map<int, netease_api.PrivilegesItem>.fromEntries(
-      privileges.map((e) => MapEntry(e.id, e)),
-    );
-    return PlaylistDetail(
-      id: id,
-      name: name,
-      coverUrl: coverImgUrl,
-      trackCount: trackCount,
-      playCount: playCount,
-      subscribedCount: subscribedCount,
-      creator: creator.toUser(),
-      description: description,
-      subscribed: subscribed,
-      tracks: tracks.map((e) => e.toTrack(privilegesMap[e.id])).toList(),
-      commentCount: commentCount,
-      shareCount: shareCount,
-      trackUpdateTime: trackUpdateTime,
-      trackIds: trackIds.map((e) => e.id).toList(),
-      createTime: DateTime.fromMillisecondsSinceEpoch(createTime),
-      isMyFavorite: specialType == 5,
-    );
-  }
-}
-
-extension _TrackMapper on netease_api.TracksItem {
-  Track toTrack(
-    netease_api.PrivilegesItem? privilege, {
-    bool isRecommend = false,
-  }) {
-    final p = privilege ?? this.privilege;
-    final album = al.id == 0
-        ? AlbumMini(id: 0, name: pc?.album ?? '-', picUri: al.picUrl)
-        : al.toAlbum();
-    final artists = ar.map((e) => e.toArtist()).toList();
-    if (artists.isEmpty || artists.first.id == 0) {
-      artists.clear();
-      artists.add(
-        ArtistMini(
-          id: 0,
-          name: pc?.artist ?? '-',
-          imageUrl: artists.firstOrNull?.imageUrl,
-        ),
-      );
-    }
-    return Track(
-      id: id,
-      name: name,
-      artists: artists,
-      album: album,
-      imageUrl: al.picUrl,
-      uri: 'http://music.163.com/song/media/outer/url?id=$id.mp3',
-      duration: Duration(milliseconds: dt),
-      type: _trackType(
-        fee: p?.fee ?? fee,
-        cs: p?.cs ?? false,
-        st: p?.st ?? st,
-      ),
-      isRecommend: isRecommend,
-      file: null,
-      mp3Url: null,
-      origin: 1,
-
-      ///默认为网易云的
-    );
-  }
-}
-
-extension _ArtistItemMapper on netease_api.ArtistItem {
-  ArtistMini toArtist() {
-    return ArtistMini(
-      id: id,
-      name: name,
-      imageUrl: null,
-    );
-  }
-}
-
-extension _ArtistMapper on netease_api.Artist {
-  Artist toArtist() {
-    return Artist(
-      id: id,
-      name: name,
-      picUrl: picUrl,
-      briefDesc: briefDesc,
-      mvSize: mvSize,
-      albumSize: albumSize,
-      followed: followed,
-      musicSize: musicSize,
-      publishTime: publishTime,
-      image1v1Url: img1v1Url,
-      alias: alias,
-    );
-  }
-}
-
-extension _AlbumItemMapper on netease_api.AlbumItem {
-  AlbumMini toAlbum() {
-    return AlbumMini(
-      id: id,
-      name: name,
-      picUri: picUrl,
-    );
-  }
-}
-
-extension _AlbumMapper on netease_api.Album {
-  Album toAlbum() {
-    return Album(
-      id: id,
-      name: name,
-      description: description,
-      briefDesc: briefDesc,
-      publishTime: DateTime.fromMillisecondsSinceEpoch(publishTime),
-      paid: paid,
-      artist: ArtistMini(
-        id: artist.id,
-        name: artist.name,
-        imageUrl: artist.picUrl,
-      ),
-      shareCount: info.shareCount,
-      commentCount: info.commentCount,
-      likedCount: info.likedCount,
-      liked: info.liked,
-      onSale: onSale,
-      company: company,
-      picUrl: picUrl,
-      size: size,
-    );
-  }
-}
-
-extension _UserMapper on netease_api.Creator {
-  User toUser() {
-    return User(
-      userId: userId,
-      nickname: nickname,
-      avatarUrl: avatarUrl,
-      followers: 0,
-      followed: followed,
-      backgroundUrl: backgroundUrl,
-      createTime: 0,
-      description: description,
-      detailDescription: detailDescription,
-      playlistBeSubscribedCount: 0,
-      playlistCount: 0,
-      allSubscribedCount: 0,
-      followedUsers: 0,
-      vipType: vipType,
-      level: 0,
-      eventCount: 0,
-    );
-  }
-}
-
-extension _UserDetailMapper on netease_api.UserDetail {
-  User toUser() {
-    return User(
-      userId: profile.userId,
-      nickname: profile.nickname,
-      avatarUrl: profile.avatarUrl,
-      followers: profile.follows,
-      followed: profile.followed,
-      backgroundUrl: profile.backgroundUrl,
-      createTime: createTime,
-      description: profile.description,
-      detailDescription: profile.detailDescription,
-      playlistBeSubscribedCount: profile.playlistBeSubscribedCount,
-      playlistCount: profile.playlistCount,
-      allSubscribedCount: profile.allSubscribedCount,
-      followedUsers: profile.followeds,
-      vipType: profile.vipType,
-      level: level,
-      eventCount: profile.eventCount,
-    );
-  }
-}
-
-class _LyricCache implements Cache<String?> {
-  _LyricCache(String dir)
-      : provider =
-            FileCacheProvider(dir, maxSize: 20 * 1024 * 1024 /* 20 Mb */);
-
-  final FileCacheProvider provider;
-
-  @override
-  Future<String?> get(CacheKey key) async {
-    final file = provider.getFile(key);
-    if (await file.exists()) {
-      provider.touchFile(file);
-      return file.readAsStringSync();
-    }
-    return null;
-  }
-
-  @override
-  Future<bool> update(CacheKey key, String? t) async {
-    if (t == null) return Future.value(false);
-    var file = provider.getFile(key);
-
-    if (file.existsSync()) {
-      file.deleteSync();
-    }
-
-    file.createSync(recursive: true);
-    file.writeAsStringSync(t);
-    try {
-      return file.exists();
-    } finally {
-      provider.checkSize();
-    }
   }
 }

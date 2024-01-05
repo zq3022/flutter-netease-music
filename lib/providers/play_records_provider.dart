@@ -1,4 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:netease_api/search_type.dart';
 
 import '../extension.dart';
 import '../repository.dart';
