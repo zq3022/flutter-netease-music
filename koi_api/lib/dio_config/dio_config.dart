@@ -10,6 +10,9 @@ class DioConfig {
   /// 响应超时时间
   static const int receiveTimeout = 6 * 1000;
 
+  /// 域名
+  static String domain = 'koiup.com';
+
   /// 请求的URL前缀
   static String baseUrl = 'http://localhost:8080';
 
@@ -27,4 +30,11 @@ class DioConfig {
 
   /// 请求头部的token属性名称
   static String tokenHeader = 'Authorization';
+  
+  /// 请求头部的tanant_id属性名称
+  static String tanantHeader = 'tanant_id';
+
+  /// 请求头部的tanant_id属性的值
+  static int tanantValue = 2;
+  
 }

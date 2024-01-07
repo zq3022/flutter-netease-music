@@ -9,19 +9,9 @@ import 'package:netease_api/netease_api.dart';
 import 'package:netease_api/search_type.dart';
 import 'package:netease_music_api/netease_cloud_music.dart' as api;
 
+import 'dio_config/dio_config.dart';
+
 class KoiApi extends MusicApi {
-  KoiApi(String cookiePath, {this.onError})
-      : super(cookiePath, onError: onError) {
-    scheduleMicrotask(() async {
-      PersistCookieJar? cookieJar;
-      try {
-        cookieJar = PersistCookieJar(storage: FileStorage(cookiePath));
-      } catch (e) {
-        LogUtil.e('error: can not create persist cookie jar');
-      }
-      _cookieJar.complete(cookieJar);
-    });
-  }
 
   @override
   int get origin => 0;
@@ -35,11 +25,8 @@ class KoiApi extends MusicApi {
   @override
   String get icon => 'assets/icon.ico';
 
-  @override
-  final OnRequestError? onError;
-
-  final Completer<PersistCookieJar> _cookieJar = Completer();
-  final String cookieUrlKey = 'http://koi.yaok.com';
+  // @override
+  // final OnRequestError? onError;
 
   /// 转码
   String _escape2Html(String str) {
@@ -48,17 +35,6 @@ class KoiApi extends MusicApi {
         .replaceAll('&gt;', '>')
         .replaceAll('&amp;', '&')
         .replaceAll('&quot;', '"');
-  }
-
-  Future<List<Cookie>> _loadCookies() async {
-    final jar = await _cookieJar.future;
-    final uri = Uri.parse(cookieUrlKey);
-    return jar.loadForRequest(uri);
-  }
-
-  Future<void> _saveCookies(List<Cookie> cookies) async {
-    final jar = await _cookieJar.future;
-    await jar.saveFromResponse(Uri.parse(cookieUrlKey), cookies);
   }
 
   ///使用手机号码登录

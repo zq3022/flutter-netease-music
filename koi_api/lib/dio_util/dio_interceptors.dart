@@ -5,19 +5,8 @@ import 'dio_response.dart';
 class DioInterceptors extends Interceptor {
   @override
   void onRequest(RequestOptions options, RequestInterceptorHandler handler) {
-    // 对非open的接口的请求参数全部增加userId
-    if (!options.path.contains('open')) {
-      options.queryParameters['userId'] = 'xxx';
-    }
-
-    // 头部添加token
-    options.headers['token'] = 'xxx';
-
     // 更多业务需求
-
     handler.next(options);
-
-    // super.onRequest(options, handler);
   }
 
   @override
@@ -32,9 +21,9 @@ class DioInterceptors extends Interceptor {
     }
 
     // 对某些单独的url返回数据做特殊处理
-    if (response.requestOptions.baseUrl.contains('???????')) {
+    // if (response.requestOptions.baseUrl.contains('???????')) {
       //....
-    }
+    // }
 
     // 根据公司的业务需求进行定制化处理
 

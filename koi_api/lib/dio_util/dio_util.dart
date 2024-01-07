@@ -1,18 +1,18 @@
 // ignore_for_file: constant_identifier_names, non_constant_identifier_names
 
+import 'dart:async';
 import 'dart:io';
 
-import 'package:cookie_jar/cookie_jar.dart';
+// import 'package:cookie_jar/cookie_jar.dart';
 import 'package:dio/dio.dart';
 import 'package:dio/io.dart';
-import 'package:dio_cookie_manager/dio_cookie_manager.dart';
+// import 'package:dio_cookie_manager/dio_cookie_manager.dart';
 
 import '../dio_config/dio_config.dart';
 import 'dio_cache_interceptors.dart';
 import 'dio_interceptors.dart';
 import 'dio_method.dart';
 import 'dio_token_interceptors.dart';
-import 'dio_transformer.dart';
 
 class DioUtil {
   factory DioUtil() => _instance ?? DioUtil._internal();
@@ -35,7 +35,7 @@ class DioUtil {
   final CancelToken _cancelToken = CancelToken();
 
   /// cookie
-  CookieJar cookieJar = CookieJar();
+  // CookieJar cookieJar = CookieJar();
 
   _init() {
     /// 初始化基本选项
@@ -49,19 +49,19 @@ class DioUtil {
     _dio = Dio(options);
 
     /// 添加拦截器
-    _dio.interceptors.add(DioInterceptors());
+    // _dio.interceptors.add(DioInterceptors());
 
     /// 添加转换器
-    _dio.transformer = DioTransformer();
+    // _dio.transformer = DioTransformer();
 
     /// 添加cookie管理器
-    _dio.interceptors.add(CookieManager(cookieJar));
+    // _dio.interceptors.add(CookieManager(cookieJar));
 
     /// 刷新token拦截器(lock/unlock)
     _dio.interceptors.add(DioTokenInterceptors());
 
     /// 添加缓存拦截器
-    _dio.interceptors.add(DioCacheInterceptors());
+    // _dio.interceptors.add(DioCacheInterceptors());
   }
 
   /// 设置Http代理(设置即开启)

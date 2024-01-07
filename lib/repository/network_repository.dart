@@ -48,7 +48,7 @@ class NetworkRepository {
     final cachePath = p.join(documentDir, 'cache');
 
     /// 注册api
-    musicApiContainer.regiester(KoiApi(cookiePath));
+    musicApiContainer.regiester(KoiApi());
     musicApiContainer
         .regiester(netease_api.Repository(cookiePath, onError: onError));
 

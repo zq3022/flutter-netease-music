@@ -9,18 +9,17 @@ import 'package:netease_api/search_type.dart';
 import 'package:netease_music_api/netease_cloud_music.dart' as api;
 
 abstract class MusicApi {
-  MusicApi(String cookiePath, {this.onError}) {
-    api.debugPrint = debugPrint;
-    scheduleMicrotask(() async {
-      PersistCookieJar? cookieJar;
-      try {
-        cookieJar = PersistCookieJar(storage: FileStorage(cookiePath));
-      } catch (e) {
-        debugPrint('error: can not create persist cookie jar');
-      }
-      _cookieJar.complete(cookieJar);
-    });
-  }
+  // MusicApi(String cookiePath, {this.onError}) {
+  //   // scheduleMicrotask(() async {
+  //   //   PersistCookieJar? cookieJar;
+  //   //   try {
+  //   //     cookieJar = PersistCookieJar(storage: FileStorage(cookiePath));
+  //   //   } catch (e) {
+  //   //     debugPrint('error: can not create persist cookie jar');
+  //   //   }
+  //   //   _cookieJar.complete(cookieJar);
+  //   // });
+  // }
 
   /// 获取唯一标志
   int get origin;
@@ -34,20 +33,20 @@ abstract class MusicApi {
   /// icon 位置
   String get icon => 'assets/icon.ico';
 
-  final Completer<PersistCookieJar> _cookieJar = Completer();
+  // final Completer<PersistCookieJar> _cookieJar = Completer();
 
-  final OnRequestError? onError;
+  // final OnRequestError? onError;
 
-  Future<List<Cookie>> _loadCookies() async {
-    final jar = await _cookieJar.future;
-    final uri = Uri.parse('http://music.163.com');
-    return jar.loadForRequest(uri);
-  }
+  // Future<List<Cookie>> _loadCookies() async {
+  //   final jar = await _cookieJar.future;
+  //   final uri = Uri.parse('http://music.163.com');
+  //   return jar.loadForRequest(uri);
+  // }
 
-  Future<void> _saveCookies(List<Cookie> cookies) async {
-    final jar = await _cookieJar.future;
-    await jar.saveFromResponse(Uri.parse('http://music.163.com'), cookies);
-  }
+  // Future<void> _saveCookies(List<Cookie> cookies) async {
+  //   final jar = await _cookieJar.future;
+  //   await jar.saveFromResponse(Uri.parse('http://music.163.com'), cookies);
+  // }
 
   ///使用手机号码登录
   Future<Result<Map>> login(String? phone, String password);
