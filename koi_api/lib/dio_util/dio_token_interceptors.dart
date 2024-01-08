@@ -3,26 +3,27 @@ import 'dart:js_interop_unsafe';
 import 'package:dio/dio.dart';
 
 import '../dio_config/dio_config.dart';
-import 'dio_cookie.dart';
+import '../temp/dio_cookie.dart';
 import 'dio_preferences_provider.dart';
 
 /// 自动刷新token
 /// 要求权限的请求，需要token。如果没有token，需要用refreshToken去刷新token,如果refreshToken都没有，先登录。
 class DioTokenInterceptors extends QueuedInterceptor {
   @override
-  Future<void> onRequest(RequestOptions options, RequestInterceptorHandler handler) async {
-    if(options.uri.isOpen()) {
+  Future<void> onRequest(
+      RequestOptions options, RequestInterceptorHandler handler) async {
+    if (options.uri.isOpen()) {
       handler.next(options);
       return;
     }
 
     if (data['success']) {
-        await _preference.clearAccess();
-        PreferencesProvider()
-          ..setUserId(data['userId'])
-          ..setAccess(data['accessToken'])
-          ..setRefresh(data['refreshToken']);
-        _apiProvider.setToken(data["accessToken"]);
+      await _preference.clearAccess();
+      PreferencesProvider()
+        ..setUserId(data['userId'])
+        ..setAccess(data['accessToken'])
+        ..setRefresh(data['refreshToken']);
+      _apiProvider.setToken(data["accessToken"]);
     }
 
     // 对非open的接口的请求参数全部增加userId
@@ -34,12 +35,9 @@ class DioTokenInterceptors extends QueuedInterceptor {
     // 头部添加token
     options.headers[DioConfig.tanantHeader] = DioConfig.tanantValue;
 
-
-
     // refresh token
     String? refreshToken = cache.getProperty(CacheKey.refreshToken);
     if (refreshToken != null) {
-
       final result = await Dio().get(DioConfig.refreshTokenUrl);
       if (result.statusCode != null && result.statusCode! ~/ 100 == 2) {
         /// assume `token` is in response body
@@ -66,7 +64,6 @@ class DioTokenInterceptors extends QueuedInterceptor {
         DioException(requestOptions: result.requestOptions),
         true,
       );
-
     } else {
       // options.headers['refreshToken'] = options.headers['refreshToken'];
       handler.next(options);

@@ -1,6 +1,6 @@
 import 'package:dio/dio.dart';
 
-import 'dio_response.dart';
+import '../dio_util/dio_response.dart';
 
 class DioInterceptors extends Interceptor {
   @override
@@ -22,7 +22,7 @@ class DioInterceptors extends Interceptor {
 
     // 对某些单独的url返回数据做特殊处理
     // if (response.requestOptions.baseUrl.contains('???????')) {
-      //....
+    //....
     // }
 
     // 根据公司的业务需求进行定制化处理

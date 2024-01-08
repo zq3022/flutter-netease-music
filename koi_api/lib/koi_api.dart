@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:async/async.dart' show Result, ErrorResult;
@@ -7,12 +8,13 @@ import 'package:cookie_jar/cookie_jar.dart';
 import 'package:music_api/music_api.dart';
 import 'package:netease_api/netease_api.dart';
 import 'package:netease_api/search_type.dart';
-import 'package:netease_music_api/netease_cloud_music.dart' as api;
 
+import 'api/api_mapper.dart';
 import 'dio_config/dio_config.dart';
+import 'dio_util/dio_response.dart';
+import 'dio_util/dio_util.dart';
 
 class KoiApi extends MusicApi {
-
   @override
   int get origin => 0;
 
@@ -566,61 +568,50 @@ class KoiApi extends MusicApi {
     });
   }
 
-  ///[path] request path
+  ///[pathKey] request path
   ///[param] parameter
   Future<Result<Map<String, dynamic>>> doRequest(
-    String path, [
-    Map param = const {},
+    String pathKey, [
+    Map<String, dynamic>? params,
+    data,
   ]) async {
-    api.Answer result;
+    DioResponse result;
+    ApiMapper.getApi(pathKey);
     try {
-      // convert all params to string
-      final convertedParams =
-          param.map((k, v) => MapEntry(k.toString(), v.toString()));
-      result = await api.cloudMusicApi(
-        path,
-        parameter: convertedParams,
-        cookie: await _loadCookies(),
+      result = await DioUtil().request(
+        pathKey,
+        params: params,
+        data: JsonEncoder(data).toString(),
       );
     } catch (e, stacktrace) {
       LogUtil.e('request error : $e \n $stacktrace');
       final result = ErrorResult(e, stacktrace);
-      onError?.call(result);
+      // onError?.call(result);
       return result;
     }
-    final map = result.body;
+    final map = result.data;
 
-    if (result.status == 200) {
-      await _saveCookies(result.cookie);
-    }
-    assert(
-      () {
-        LogUtil.e('api request: $path $param');
-        // LogUtil.e('api response: ${result.status} ${jsonEncode(result.body)}');
-        return true;
-      }(),
-    );
-    if (map['code'] == kCodeNeedLogin) {
-      final error = ErrorResult(
-        RequestError(
-          code: kCodeNeedLogin,
-          message: '需要登录才能访问哦~',
-          answer: result,
-        ),
-      );
-      onError?.call(error);
-      return error;
-    } else if (map['code'] != kCodeSuccess) {
-      final error = ErrorResult(
-        RequestError(
-          code: map['code'],
-          message: map['msg'] ?? map['message'] ?? '请求失败了~',
-          answer: result,
-        ),
-      );
-      onError?.call(error);
-      return error;
-    }
+    // if (map['code'] == kCodeNeedLogin) {
+    //   final error = ErrorResult(
+    //     RequestError(
+    //       code: kCodeNeedLogin,
+    //       message: '需要登录才能访问哦~',
+    //       answer: result,
+    //     ),
+    //   );
+    //   onError?.call(error);
+    //   return error;
+    // } else if (map['code'] != kCodeSuccess) {
+    //   final error = ErrorResult(
+    //     RequestError(
+    //       code: map['code'],
+    //       message: map['msg'] ?? map['message'] ?? '请求失败了~',
+    //       answer: result,
+    //     ),
+    //   );
+    //   onError?.call(error);
+    //   return error;
+    // }
     return Result.value(map as Map<String, dynamic>);
   }
 }

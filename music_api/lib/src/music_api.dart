@@ -2,11 +2,8 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:async/async.dart' show Result;
-import 'package:cookie_jar/cookie_jar.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:netease_api/netease_api.dart';
 import 'package:netease_api/search_type.dart';
-import 'package:netease_music_api/netease_cloud_music.dart' as api;
 
 abstract class MusicApi {
   // MusicApi(String cookiePath, {this.onError}) {

@@ -3,14 +3,9 @@
 import 'dart:async';
 import 'dart:io';
 
-// import 'package:cookie_jar/cookie_jar.dart';
 import 'package:dio/dio.dart';
 import 'package:dio/io.dart';
-// import 'package:dio_cookie_manager/dio_cookie_manager.dart';
-
 import '../dio_config/dio_config.dart';
-import 'dio_cache_interceptors.dart';
-import 'dio_interceptors.dart';
 import 'dio_method.dart';
 import 'dio_token_interceptors.dart';
 
@@ -105,7 +100,7 @@ class DioUtil {
     String path, {
     DioMethod method = DioMethod.get,
     Map<String, dynamic>? params,
-    data,
+    Object? data,
     CancelToken? cancelToken,
     Options? options,
     ProgressCallback? onSendProgress,
