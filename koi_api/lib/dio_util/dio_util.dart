@@ -5,6 +5,7 @@ import 'dart:io';
 
 import 'package:dio/dio.dart';
 import 'package:dio/io.dart';
+import '../api/api_mapper.dart';
 import '../dio_config/dio_config.dart';
 import 'dio_method.dart';
 import 'dio_token_interceptors.dart';
@@ -97,7 +98,7 @@ class DioUtil {
 
   /// 请求类
   Future<T> request<T>(
-    String path, {
+    String pathKey, {
     DioMethod method = DioMethod.get,
     Map<String, dynamic>? params,
     Object? data,
@@ -114,11 +115,11 @@ class DioUtil {
       DioMethod.patch: 'patch',
       DioMethod.head: 'head',
     };
-
+    _dio.options.headers['_pathkey'] = pathKey;
     options ??= Options(method: _methodValues[method]);
     try {
       Response response;
-      response = await _dio.request(path,
+      response = await _dio.request(ApiMapper.getApi(pathKey)!,
           data: data,
           queryParameters: params,
           cancelToken: cancelToken ?? _cancelToken,

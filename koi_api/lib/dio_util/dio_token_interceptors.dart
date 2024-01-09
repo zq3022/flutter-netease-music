@@ -2,6 +2,7 @@ import 'dart:js_interop_unsafe';
 
 import 'package:dio/dio.dart';
 
+import '../api/api_mapper.dart';
 import '../dio_config/dio_config.dart';
 import '../temp/dio_cookie.dart';
 import 'dio_preferences_provider.dart';
@@ -12,28 +13,48 @@ class DioTokenInterceptors extends QueuedInterceptor {
   @override
   Future<void> onRequest(
       RequestOptions options, RequestInterceptorHandler handler) async {
-    if (options.uri.isOpen()) {
+    if (ApiMapper.isOpen(options.headers['_pathkey'])) {
       handler.next(options);
       return;
     }
+    // 头部添加租户id
+    options.headers[DioConfig.tanantHeader] = DioConfig.tanantValue;
+    
+    // token
+    final _preference = PreferencesProvider();
+    final tokenStr = await _preference.getAccess();
+    final tokenTimestamp = _preference.getTokenTimestamp();
+    
+
+    final refreshToken = _preference.getAccess();
+    final refreshTokenTimestamp = _preference.getRefreshTokenTimestamp();
+
+    final refreshTimestamp = DateTime.parse(refreshTokenTimestamp);
+    final currentTime = DateTime.now();
+    final tokenDuration = currentTime.difference(DateTime.parse(tokenTimestamp));
+    const Duration tokenExpirationDuration = Duration(hours: 1);
+    if (tokenDuration <= tokenExpirationDuration) {
+      return token;
+    } else {
+      await clearAccessToken();
+      return null;
+    }
+
+    if (token == null && refreshToken != null) {
+      // 刷新token
+      options.headers[DioConfig.tokenHeader] = 
+    } else if (refreshToken == null) {
+      // 重新登录
+    }
+
 
     if (data['success']) {
       await _preference.clearAccess();
-      PreferencesProvider()
-        ..setUserId(data['userId'])
+      _preference.setUserId(data['userId'])
         ..setAccess(data['accessToken'])
         ..setRefresh(data['refreshToken']);
       _apiProvider.setToken(data["accessToken"]);
     }
-
-    // 对非open的接口的请求参数全部增加userId
-    if (options.headers[DioConfig.tokenHeader] == null) {
-      final cookieCache = DioCookie.getInstance();
-      options.headers[DioConfig.tokenHeader] = cookieCache.loadCookies();
-    }
-
-    // 头部添加token
-    options.headers[DioConfig.tanantHeader] = DioConfig.tanantValue;
 
     // refresh token
     String? refreshToken = cache.getProperty(CacheKey.refreshToken);

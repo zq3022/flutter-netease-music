@@ -7,8 +7,8 @@ final authApis = <String, String>{
 };
 
 class ApiMapper {
-  static bool isOpen(String pathKey) {
-    return openApis[pathKey] == null;
+  static bool isOpen(String? pathKey) {
+    return pathKey != null && openApis[pathKey] != null;
   }
 
   static String? getApi(String pathKey) {
