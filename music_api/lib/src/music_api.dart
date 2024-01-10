@@ -32,7 +32,7 @@ abstract class MusicApi {
 
   // final Completer<PersistCookieJar> _cookieJar = Completer();
 
-  // final OnRequestError? onError;
+  OnRequestError? onError;
 
   // Future<List<Cookie>> _loadCookies() async {
   //   final jar = await _cookieJar.future;

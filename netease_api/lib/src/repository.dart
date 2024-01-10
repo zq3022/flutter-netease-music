@@ -30,8 +30,7 @@ Result<R> _map<R>(
 }
 
 class Repository extends MusicApi {
-  Repository(String cookiePath, {this.onError})
-      : super() {
+  Repository(String cookiePath, {this.onError}) : super() {
     api.debugPrint = debugPrint;
     scheduleMicrotask(() async {
       PersistCookieJar? cookieJar;

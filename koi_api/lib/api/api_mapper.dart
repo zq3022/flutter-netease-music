@@ -1,9 +1,12 @@
-final openApis = <String, String>{
-  'login': '/member/auth/login',
+import '../dio_util/dio_method.dart';
+
+final openApis = <String, List<dynamic>>{
+  'login': ['/member/auth/login', DioMethod.post],
+  'refreshToken': ['/member/auth/refresh-token', DioMethod.post],
 };
 
-final authApis = <String, String>{
-  'key': 'value',
+final authApis = <String, List<dynamic>>{
+  'userDetail': ['/member/user/get', DioMethod.get],
 };
 
 class ApiMapper {
@@ -11,7 +14,7 @@ class ApiMapper {
     return pathKey != null && openApis[pathKey] != null;
   }
 
-  static String? getApi(String pathKey) {
+  static List<dynamic>? getApi(String pathKey) {
     return isOpen(pathKey) ? openApis[pathKey] : authApis[pathKey];
   }
 }

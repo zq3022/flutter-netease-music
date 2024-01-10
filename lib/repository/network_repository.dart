@@ -48,7 +48,7 @@ class NetworkRepository {
     final cachePath = p.join(documentDir, 'cache');
 
     /// 注册api
-    musicApiContainer.regiester(KoiApi());
+    musicApiContainer.regiester(KoiApi(onError: onError));
     musicApiContainer
         .regiester(netease_api.Repository(cookiePath, onError: onError));
 
@@ -186,7 +186,7 @@ class NetworkRepository {
     String phone,
     String countryCode,
   ) =>
-      musicApiContainer.getApi(1).then((musicApi) => musicApi.checkPhoneExist(
+      musicApiContainer.getApi(0).then((musicApi) => musicApi.checkPhoneExist(
             phone,
             countryCode,
           ));
@@ -410,7 +410,7 @@ class NetworkRepository {
 
   Future<Result<User>> getUserDetail(int uid) async {
     final ret = await musicApiContainer
-        .getApi(1)
+        .getApi(0)
         .then((musicApi) => musicApi.getUserDetail(uid));
     if (ret.isError) {
       return ret.asError!;

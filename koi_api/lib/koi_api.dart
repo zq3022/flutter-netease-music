@@ -1,20 +1,15 @@
 import 'dart:async';
-import 'dart:convert';
-import 'dart:io';
 
 import 'package:async/async.dart' show Result, ErrorResult;
 import 'package:common_utils/common_utils.dart';
-import 'package:cookie_jar/cookie_jar.dart';
 import 'package:music_api/music_api.dart';
 import 'package:netease_api/netease_api.dart';
 import 'package:netease_api/search_type.dart';
 
-import 'api/api_mapper.dart';
-import 'dio_config/dio_config.dart';
-import 'dio_util/dio_response.dart';
 import 'dio_util/dio_util.dart';
 
 class KoiApi extends MusicApi {
+  KoiApi({this.onError});
   @override
   int get origin => 0;
 
@@ -27,8 +22,8 @@ class KoiApi extends MusicApi {
   @override
   String get icon => 'assets/icon.ico';
 
-  // @override
-  // final OnRequestError? onError;
+  @override
+  final OnRequestError? onError;
 
   /// 转码
   String _escape2Html(String str) {
@@ -42,10 +37,19 @@ class KoiApi extends MusicApi {
   ///使用手机号码登录
   @override
   Future<Result<Map>> login(String? phone, String password) async {
-    return doRequest(
-      '/member/auth/login',
-      {'phone': phone, 'password': password},
+    final result = await doRequest(
+      'login',
+      null,
+      {'mobile': phone, 'password': password},
     );
+    LogUtil.e('koi_api.login::result::${result.asValue!.value}');
+    final json = result.asValue!.value;
+    final userId = json['data']['userId'] as int;
+    LogUtil.e('koi_api.login::userId::$userId');
+    return Result.value({
+      'code': 200,
+      'account': {'id': userId},
+    });
   }
 
   @override
@@ -59,16 +63,16 @@ class KoiApi extends MusicApi {
   /// 803: qrcode is approved
   @override
   Future<int> loginQrCheck(String key) async {
-    try {
-      final ret =
-          await (await doRequest('/login/qr/check', {'key': key})).asFuture;
-      LogUtil.e('login qr check: $ret');
-    } on RequestError catch (error) {
-      if (error.code == 803) {
-        await _saveCookies(error.answer.cookie);
-      }
-      return error.code;
-    }
+    // try {
+    //   final ret =
+    //       await (await doRequest('/login/qr/check', {'key': key})).asFuture;
+    //   LogUtil.e('login qr check: $ret');
+    // } on RequestError catch (error) {
+    //   if (error.code == 803) {
+    //     await _saveCookies(error.answer.cookie);
+    //   }
+    //   return error.code;
+    // }
     throw Exception('unknown error');
   }
 
@@ -91,7 +95,7 @@ class KoiApi extends MusicApi {
   @override
   Future<void> logout() async {
     //删除cookie
-    await _cookieJar.future.then((v) => v.deleteAll());
+    // await _cookieJar.future.then((v) => v.deleteAll());
   }
 
   ///PlayListDetail 中的 tracks 都是空数据
@@ -518,7 +522,7 @@ class KoiApi extends MusicApi {
   ///获取用户详情
   @override
   Future<Result<UserDetail>> getUserDetail(int uid) async {
-    final result = await doRequest('/user/detail', {'uid': uid});
+    final result = await doRequest('userDetail');
     return _map(result, (t) => UserDetail.fromJson(t));
   }
 
@@ -545,12 +549,13 @@ class KoiApi extends MusicApi {
     String phone,
     String countryCode,
   ) async {
-    final result = await doRequest(
-      '/cellphone/existence/check',
-      {'phone': phone, 'countrycode': countryCode},
-    );
-    if (result.isError) return result.asError!;
-    final value = CellphoneExistenceCheck.fromJson(result.asValue!.value);
+    // final result = await doRequest(
+    //   '/cellphone/existence/check',
+    //   {'phone': phone, 'countrycode': countryCode},
+    // );
+    // if (result.isError) return result.asError!;
+    final value = CellphoneExistenceCheck.fromJson(
+        {'exist': 1, 'nickname': '111qzh', 'hasPassword': true});
     return Result.value(value);
   }
 
@@ -575,44 +580,43 @@ class KoiApi extends MusicApi {
     Map<String, dynamic>? params,
     data,
   ]) async {
-    DioResponse result;
-    ApiMapper.getApi(pathKey);
+    Map<String, dynamic> result;
+    LogUtil.e('koi_api.doRequest::>>>>>>>>>>>>>>>>$pathKey, $params, $data');
     try {
       result = await DioUtil().request(
         pathKey,
         params: params,
-        data: JsonEncoder(data).toString(),
+        data: data,
       );
+      LogUtil.e('koi_api.doRequest::result::$result');
     } catch (e, stacktrace) {
-      LogUtil.e('request error : $e \n $stacktrace');
+      LogUtil.e('koi_api.doRequest::errorCatch: $e \n $stacktrace');
       final result = ErrorResult(e, stacktrace);
-      // onError?.call(result);
+      onError?.call(result);
       return result;
     }
-    final map = result.data;
-
-    // if (map['code'] == kCodeNeedLogin) {
-    //   final error = ErrorResult(
-    //     RequestError(
-    //       code: kCodeNeedLogin,
-    //       message: '需要登录才能访问哦~',
-    //       answer: result,
-    //     ),
-    //   );
-    //   onError?.call(error);
-    //   return error;
-    // } else if (map['code'] != kCodeSuccess) {
-    //   final error = ErrorResult(
-    //     RequestError(
-    //       code: map['code'],
-    //       message: map['msg'] ?? map['message'] ?? '请求失败了~',
-    //       answer: result,
-    //     ),
-    //   );
-    //   onError?.call(error);
-    //   return error;
-    // }
-    return Result.value(map as Map<String, dynamic>);
+    if (result['code'] == 401) {
+      final error = ErrorResult(
+        RequestError(
+          code: kCodeNeedLogin,
+          message: '需要登录才能访问哦~',
+          answer: Answer(body: result),
+        ),
+      );
+      onError?.call(error);
+      return error;
+    } else if (result['code'] != 0) {
+      final error = ErrorResult(
+        RequestError(
+          code: result['code'],
+          message: result['msg'] ?? result['message'] ?? '请求失败了~',
+          answer: Answer(body: result),
+        ),
+      );
+      onError?.call(error);
+      return error;
+    }
+    return Result.value(result);
   }
 }
 

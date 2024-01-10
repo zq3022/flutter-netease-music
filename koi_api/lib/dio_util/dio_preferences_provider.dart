@@ -16,26 +16,31 @@ class PreferencesProvider {
 
   Future<void> setAccess(String value) async {
     await _initPreferences();
-    await _preferences!.setString('access_token', value);
+    await _preferences!.setString('accessToken', value);
   }
 
   Future<String?> getAccess() async {
     await _initPreferences();
-    return _preferences!.getString('access_token');
+    return _preferences!.getString('accessToken');
   }
 
   Future<void> clearAccess() async {
     await _initPreferences();
-    await _preferences!.remove('access_token');
+    await _preferences!.remove('accessToken');
   }
 
   Future<void> setRefresh(String value) async {
     await _initPreferences();
-    await _preferences!.setString('refresh_token', value);
+    await _preferences!.setString('refreshToken', value);
   }
 
   Future<String?> getRefresh() async {
     await _initPreferences();
-    return _preferences!.getString('refresh_token');
+    return _preferences!.getString('refreshToken');
+  }
+
+  Future<void> clearRefresh() async {
+    await _initPreferences();
+    await _preferences!.remove('refreshToken');
   }
 }

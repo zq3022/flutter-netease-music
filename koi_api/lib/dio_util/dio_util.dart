@@ -1,10 +1,12 @@
 // ignore_for_file: constant_identifier_names, non_constant_identifier_names
-
 import 'dart:async';
+import 'dart:convert';
 import 'dart:io';
 
+import 'package:common_utils/common_utils.dart';
 import 'package:dio/dio.dart';
 import 'package:dio/io.dart';
+
 import '../api/api_mapper.dart';
 import '../dio_config/dio_config.dart';
 import 'dio_method.dart';
@@ -40,6 +42,9 @@ class DioUtil {
       connectTimeout: const Duration(milliseconds: DioConfig.connectTimeout),
       receiveTimeout: const Duration(milliseconds: DioConfig.receiveTimeout),
     );
+
+    // 头部添加租户id
+    options.headers[DioConfig.tanantHeader] = DioConfig.tanantValue;
 
     /// 初始化dio
     _dio = Dio(options);
@@ -116,16 +121,24 @@ class DioUtil {
       DioMethod.head: 'head',
     };
     _dio.options.headers['_pathkey'] = pathKey;
-    options ??= Options(method: _methodValues[method]);
+    // options ??= Options(method: _methodValues[method]);
     try {
       Response response;
-      response = await _dio.request(ApiMapper.getApi(pathKey)!,
+      _dio.options.headers['tenant-id'] = 1;
+      final api = ApiMapper.getApi(pathKey);
+      _dio.options.method = _methodValues[api![1]]!;
+      LogUtil.e(
+        'dio_utils.request::headers::${jsonEncode(_dio.options.headers)}',
+      );
+
+      response = await _dio.request(api[0],
           data: data,
           queryParameters: params,
           cancelToken: cancelToken ?? _cancelToken,
-          options: options,
+          // options: options,
           onSendProgress: onSendProgress,
           onReceiveProgress: onReceiveProgress);
+      LogUtil.e('dio_utils.request::response::$response');
       return response.data;
     } on DioException {
       rethrow;

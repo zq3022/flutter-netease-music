@@ -132,7 +132,7 @@ class NeteaseAccountNotifier extends ChangeNotifier {
     if (userDetailResult.isError) {
       final error = userDetailResult.asError!;
       debugPrint('error : ${error.error} ${error.stackTrace}');
-      throw Exception('can not get user detail.');
+      throw Exception('获取用户信息失败！');
     }
     _authKeyValue.neteaseUser = NeteaseUser(
       user: userDetailResult.asValue!.value,

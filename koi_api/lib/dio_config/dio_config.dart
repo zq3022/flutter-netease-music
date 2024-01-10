@@ -8,16 +8,16 @@ class DioConfig {
   static const int connectTimeout = 15 * 1000;
 
   /// 响应超时时间
-  static const int receiveTimeout = 6 * 1000;
+  static const int receiveTimeout = 30 * 1000;
 
   /// 域名
   static String domain = 'koiup.com';
 
   /// 请求的URL前缀
-  static String baseUrl = 'http://localhost:8080';
+  static String baseUrl = 'http://localhost:48080/app-api';
 
   /// 刷新token的请求URL
-  static String refreshTokenUrl = 'http://localhost:8080';
+  static String refreshTokenUrl = '/member/auth/refresh-token';
 
   /// 是否开启网络缓存,默认false
   static bool cacheEnable = false;
@@ -30,11 +30,10 @@ class DioConfig {
 
   /// 请求头部的token属性名称
   static String tokenHeader = 'Authorization';
-  
+
   /// 请求头部的tanant_id属性名称
-  static String tanantHeader = 'tanant_id';
+  static String tanantHeader = 'tenant-id';
 
   /// 请求头部的tanant_id属性的值
-  static int tanantValue = 2;
-  
+  static int tanantValue = 1;
 }
