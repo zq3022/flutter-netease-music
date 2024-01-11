@@ -104,38 +104,56 @@ class DioUtil {
   /// 请求类
   Future<T> request<T>(
     String pathKey, {
-    DioMethod method = DioMethod.get,
     Map<String, dynamic>? params,
-    Object? data,
+    // Object? data,
     CancelToken? cancelToken,
     Options? options,
     ProgressCallback? onSendProgress,
     ProgressCallback? onReceiveProgress,
   }) async {
-    const _methodValues = {
-      DioMethod.get: 'get',
-      DioMethod.post: 'post',
-      DioMethod.put: 'put',
-      DioMethod.delete: 'delete',
-      DioMethod.patch: 'patch',
-      DioMethod.head: 'head',
-    };
     _dio.options.headers['_pathkey'] = pathKey;
-    // options ??= Options(method: _methodValues[method]);
     try {
       Response response;
       _dio.options.headers['tenant-id'] = 1;
       final api = ApiMapper.getApi(pathKey);
-      _dio.options.method = _methodValues[api![1]]!;
       LogUtil.e(
         'dio_utils.request::headers::${jsonEncode(_dio.options.headers)}',
       );
-
+      Map<String, dynamic>? data;
+      Map<String, dynamic>? queryParameters;
+      var method = 'get';
+      switch (api![1]) {
+        case DioMethod.post:
+          method = 'post';
+          data = params;
+          break;
+        case DioMethod.put:
+          data = params;
+          method = 'put';
+          break;
+        case DioMethod.delete:
+          data = params;
+          method = 'delete';
+          break;
+        case DioMethod.patch:
+          data = params;
+          method = 'patch';
+          break;
+        case DioMethod.head:
+          data = params;
+          method = 'head';
+          break;
+        case DioMethod.get:
+          queryParameters = params;
+          method = 'get';
+      }
+      _dio.options.method = method;
+      // options ??= Options(method: _methodValues[method]);
       response = await _dio.request(api[0],
           data: data,
-          queryParameters: params,
+          queryParameters: queryParameters,
           cancelToken: cancelToken ?? _cancelToken,
-          // options: options,
+          options: options,
           onSendProgress: onSendProgress,
           onReceiveProgress: onReceiveProgress);
       LogUtil.e('dio_utils.request::response::$response');

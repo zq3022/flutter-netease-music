@@ -39,7 +39,6 @@ class KoiApi extends MusicApi {
   Future<Result<Map>> login(String? phone, String password) async {
     final result = await doRequest(
       'login',
-      null,
       {'mobile': phone, 'password': password},
     );
     LogUtil.e('koi_api.login::result::${result.asValue!.value}');
@@ -549,13 +548,16 @@ class KoiApi extends MusicApi {
     String phone,
     String countryCode,
   ) async {
-    // final result = await doRequest(
-    //   '/cellphone/existence/check',
-    //   {'phone': phone, 'countrycode': countryCode},
-    // );
-    // if (result.isError) return result.asError!;
-    final value = CellphoneExistenceCheck.fromJson(
-        {'exist': 1, 'nickname': '111qzh', 'hasPassword': true});
+    final result = await doRequest(
+      'mobileExist',
+      {'mobile': phone},
+    );
+    if (result.isError) return result.asError!;
+
+    // final value = CellphoneExistenceCheck.fromJson(
+    //     {'exist': 0, 'nickname': '111qzh', 'hasPassword': true});
+    final value =
+        CellphoneExistenceCheck.fromJson(result.asValue!.value['data']);
     return Result.value(value);
   }
 
@@ -578,15 +580,13 @@ class KoiApi extends MusicApi {
   Future<Result<Map<String, dynamic>>> doRequest(
     String pathKey, [
     Map<String, dynamic>? params,
-    data,
   ]) async {
     Map<String, dynamic> result;
-    LogUtil.e('koi_api.doRequest::>>>>>>>>>>>>>>>>$pathKey, $params, $data');
+    LogUtil.e('koi_api.doRequest::>>>>>>>>>>>>>>>>$pathKey, $params');
     try {
       result = await DioUtil().request(
         pathKey,
         params: params,
-        data: data,
       );
       LogUtil.e('koi_api.doRequest::result::$result');
     } catch (e, stacktrace) {

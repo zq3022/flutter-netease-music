@@ -27,7 +27,8 @@ class LoginPage extends HookWidget {
       ),
       body: loginType.value == LoginType.phoneNumber
           ? _BodyLoginWithPhoneNumber(
-              onSwitchToQrCode: () => loginType.value = LoginType.qrcode,
+              // onSwitchToQrCode: () => loginType.value = LoginType.qrcode,
+              onSwitchToQrCode: () => loginType.value = LoginType.phoneNumber,
             )
           : _BodyLoginWithQrCode(
               onSwitchToPhoneNumber: () =>
@@ -56,10 +57,10 @@ class _BodyLoginWithPhoneNumber extends ConsumerWidget {
               .navigate(NavigationTargetLoginPassword(phoneNumber)),
         ),
         const SizedBox(height: 20),
-        TextButton(
-          onPressed: onSwitchToQrCode,
-          child: Text(context.strings.loginViaQrCode),
-        ),
+        // TextButton(
+        //   onPressed: onSwitchToQrCode,
+        //   child: Text(context.strings.loginViaQrCode),
+        // ),
       ],
     );
   }

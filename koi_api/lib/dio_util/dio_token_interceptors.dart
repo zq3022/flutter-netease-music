@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:ffi';
 
 import 'package:common_utils/common_utils.dart';
 import 'package:dio/dio.dart';

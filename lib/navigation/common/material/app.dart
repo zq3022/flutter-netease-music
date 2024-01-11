@@ -25,7 +25,8 @@ class CopyRightOverlay extends HookConsumerWidget {
       foregroundPainter:
           ref.watch(settingKeyValueProvider.select((value) => value.copyright))
               ? null
-              : painter,
+              : null,
+      // : painter,
       child: child,
     );
   }

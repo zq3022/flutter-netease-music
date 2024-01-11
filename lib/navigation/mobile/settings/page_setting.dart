@@ -27,10 +27,10 @@ class PageSettings extends StatelessWidget {
             title: context.strings.theme,
             children: const [ThemeSwitchRadios()],
           ),
-          const Divider(height: 20),
-          const _SettingGroup(
-            children: [CopyRightOverlayCheckBox()],
-          ),
+          // const Divider(height: 20),
+          // const _SettingGroup(
+          //   children: [CopyRightOverlayCheckBox()],
+          // ),
           if (!kReleaseMode) const _DebugNavigationPlatformSetting(),
           const Divider(height: 20),
           _SettingGroup(

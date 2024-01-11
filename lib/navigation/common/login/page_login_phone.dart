@@ -1,7 +1,4 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:overlay_support/overlay_support.dart';
@@ -9,14 +6,24 @@ import 'package:overlay_support/overlay_support.dart';
 import '../../../extension.dart';
 import '../../../model/region_flag.dart';
 import '../../../repository.dart';
+import '../../../utils/string_util.dart';
 import '../material/dialogs.dart';
 import 'page_dia_code_selection.dart';
 
 /// Read emoji flags from assets.
 Future<List<RegionFlag>> _getRegions() async {
-  final jsonStr =
-      await rootBundle.loadString('assets/emoji-flags.json', cache: false);
-  final flags = json.decode(jsonStr) as List;
+  // final jsonStr =
+  //     await rootBundle.loadString('assets/emoji-flags.json', cache: false);
+  // final flags = json.decode(jsonStr) as List;
+  final flags = [
+    {
+      'code': 'CN',
+      'emoji': '🇨🇳',
+      'unicode': 'U+1F1E8 U+1F1F3',
+      'name': 'China',
+      'dialCode': '+86',
+    },
+  ];
   final result = flags.cast<Map>().map(RegionFlag.fromMap).where((flag) {
     return flag.dialCode != null && flag.dialCode!.trim().isNotEmpty;
   }).toList();
@@ -76,6 +83,10 @@ class _PhoneInputLayout extends HookConsumerWidget {
       final text = inputController.text;
       if (text.isEmpty) {
         toast('请输入手机号');
+        return;
+      }
+      if (!StringUtil.isChinaPhoneLegal(text)) {
+        toast('请输入正确的手机号');
         return;
       }
 
