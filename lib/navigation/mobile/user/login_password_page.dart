@@ -1,3 +1,4 @@
+import 'package:common_utils/common_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
@@ -9,12 +10,15 @@ class LoginPasswordPage extends HookConsumerWidget {
   const LoginPasswordPage({
     super.key,
     required this.phoneNumber,
+    required this.registered,
   });
 
   final String phoneNumber;
+  final bool registered;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    LogUtil.e('login_password_page::$phoneNumber,$registered');
     return Scaffold(
       appBar: AppBar(
         title: Text(context.strings.loginWithPhone),
@@ -22,6 +26,7 @@ class LoginPasswordPage extends HookConsumerWidget {
       ),
       body: LoginPasswordWidget(
         phone: phoneNumber,
+        registered: registered,
         onVerified: () {
           ref.read(navigatorProvider.notifier)
             ..back()

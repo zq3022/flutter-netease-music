@@ -78,6 +78,14 @@ class Repository extends MusicApi {
     );
   }
 
+  ///使用手机号密码注册
+  Future<Result<Map>> signUp(String? phone, String password) async {
+    return doRequest(
+      '/signup/cellphone',
+      {'phone': phone, 'password': password},
+    );
+  }
+
   Future<Result<Map>> loginQrKey() {
     return doRequest('/login/qr/key');
   }

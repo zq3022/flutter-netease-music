@@ -124,6 +124,20 @@ class NeteaseAccountNotifier extends ChangeNotifier {
     return result;
   }
 
+  Future<Result<Map>> signUp(String? phone, String password) async {
+    final result = await neteaseRepository!.signUp(phone, password);
+    if (result.isValue) {
+      final json = result.asValue!.value;
+      final userId = json['account']['id'] as int;
+      try {
+        await _updateLoginStatus(userId);
+      } catch (error, stacktrace) {
+        return Result.error(error, stacktrace);
+      }
+    }
+    return result;
+  }
+
   Future<void> _updateLoginStatus(
     int userId, {
     bool loginByQrKey = false,

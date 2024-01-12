@@ -51,6 +51,23 @@ class KoiApi extends MusicApi {
     });
   }
 
+  ///使用手机号码密码注册
+  @override
+  Future<Result<Map>> signUp(String? phone, String password) async {
+    final result = await doRequest(
+      'signUp',
+      {'mobile': phone, 'password': password},
+    );
+    LogUtil.e('koi_api.login::result::${result.asValue!.value}');
+    final json = result.asValue!.value;
+    final userId = json['data']['userId'] as int;
+    LogUtil.e('koi_api.login::userId::$userId');
+    return Result.value({
+      'code': 200,
+      'account': {'id': userId},
+    });
+  }
+
   @override
   Future<Result<Map>> loginQrKey() {
     return doRequest('/login/qr/key');

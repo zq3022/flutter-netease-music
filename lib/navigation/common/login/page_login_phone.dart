@@ -30,7 +30,10 @@ Future<List<RegionFlag>> _getRegions() async {
   return result;
 }
 
-typedef PhoneNumberSubmitCallback = void Function(String phoneNumber);
+typedef PhoneNumberSubmitCallback = void Function(
+  String phoneNumber,
+  bool registered,
+);
 
 class LoginPhoneNumberInputWidget extends HookWidget {
   const LoginPhoneNumberInputWidget({
@@ -104,15 +107,16 @@ class _PhoneInputLayout extends HookConsumerWidget {
         return;
       }
       final value = result.asValue!.value;
-      if (!value.isExist) {
-        toast('注册流程开发未完成,欢迎贡献代码...');
-        return;
-      }
-      if (!value.hasPassword!) {
-        toast('无密码登录流程的开发未完成,欢迎提出PR贡献代码...');
-        return;
-      }
-      onSubmit(text);
+      // if (!value.isExist) {
+      //   toast('注册流程开发未完成,欢迎贡献代码...');
+      //   return;
+      // }
+      // if (!value.hasPassword!) {
+      //   toast('无密码登录流程的开发未完成,欢迎提出PR贡献代码...');
+      //   return;
+      // }
+      toast('${value.toJson()}');
+      onSubmit(text, value.isExist);
     }
 
     return Padding(

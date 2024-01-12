@@ -48,6 +48,9 @@ abstract class MusicApi {
   ///使用手机号码登录
   Future<Result<Map>> login(String? phone, String password);
 
+  ///使用手机号码密码注册
+  Future<Result<Map>> signUp(String? phone, String password);
+
   Future<Result<Map>> loginQrKey();
 
   /// 800: qrcode is expired

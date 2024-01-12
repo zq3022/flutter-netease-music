@@ -110,6 +110,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "loading": MessageLookupByLibrary.simpleMessage("Loading..."),
         "localMusic": MessageLookupByLibrary.simpleMessage("Local Music"),
         "login": MessageLookupByLibrary.simpleMessage("Login"),
+        "signUp": MessageLookupByLibrary.simpleMessage("Sign Up"),
         "loginViaQrCode":
             MessageLookupByLibrary.simpleMessage("Login via QR code"),
         "loginViaQrCodeWaitingConfirmDescription":
@@ -152,6 +153,12 @@ class MessageLookup extends MessageLookupByLibrary {
         "playlistTrackCount": m6,
         "pleaseInputPassword":
             MessageLookupByLibrary.simpleMessage("Please input password"),
+        "passwordLengthBetween4And16": MessageLookupByLibrary.simpleMessage(
+            "Password length must be between 4 and 16"),
+        "pleaseRepeatPassword":
+            MessageLookupByLibrary.simpleMessage("Please repeat your password"),
+        "enteredPasswordsDiffer":
+            MessageLookupByLibrary.simpleMessage("Entered passwords differ"),
         "projectDescription": MessageLookupByLibrary.simpleMessage(
             "OpenSource project https://github.com/boyan01/flutter-netease-music"),
         "qrCodeExpired":

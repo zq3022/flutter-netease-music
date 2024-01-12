@@ -171,15 +171,18 @@ class LoginPasswordWidget extends HookConsumerWidget {
   const LoginPasswordWidget({
     super.key,
     required this.phone,
+    required this.registered,
     required this.onVerified,
   });
 
   final String phone;
+  final bool registered;
   final VoidCallback onVerified;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final inputController = useMemoized(TextEditingController.new);
+    final inputController2 = useMemoized(TextEditingController.new);
 
     Future<void> doLogin() async {
       final password = inputController.text;
@@ -200,6 +203,38 @@ class LoginPasswordWidget extends HookConsumerWidget {
       }
     }
 
+    Future<void> doSignUp() async {
+      final password = inputController.text;
+      final password2 = inputController2.text;
+      if (password.isEmpty) {
+        toast(context.strings.pleaseInputPassword);
+        return;
+      }
+      if (password.length < 4 || password.length > 16) {
+        toast(context.strings.passwordLengthBetween4And16);
+      }
+      if (password2.isEmpty) {
+        toast(context.strings.pleaseRepeatPassword);
+        return;
+      }
+      if (password != password2) {
+        toast(context.strings.enteredPasswordsDiffer);
+        return;
+      }
+
+      final account = ref.read(neteaseAccountProvider.notifier);
+      final result = await showLoaderOverlay(
+        context,
+        account.signUp(phone, password),
+      );
+      if (result.isValue) {
+        // close login page.
+        onVerified();
+      } else {
+        toast('注册失败:${result.asError!.error}');
+      }
+    }
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20),
       child: Column(
@@ -215,10 +250,25 @@ class LoginPasswordWidget extends HookConsumerWidget {
             ),
           ),
           const SizedBox(height: 20),
+          Visibility(
+            visible: !registered,
+            child: TextField(
+              controller: inputController2,
+              obscureText: true,
+              keyboardType: TextInputType.url,
+              decoration: InputDecoration(
+                hintText: context.strings.pleaseRepeatPassword,
+              ),
+            ),
+          ),
+          Visibility(
+            visible: !registered,
+            child: const SizedBox(height: 20),
+          ),
           StretchButton(
-            text: context.strings.login,
+            text: registered ? context.strings.login : context.strings.signUp,
             primary: false,
-            onTap: doLogin,
+            onTap: registered ? doLogin : doSignUp,
           ),
         ],
       ),

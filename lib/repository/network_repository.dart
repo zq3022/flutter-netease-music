@@ -403,10 +403,14 @@ class NetworkRepository {
   Future<void> logout() =>
       musicApiContainer.getApi(1).then((musicApi) => musicApi.logout());
 
-  // FIXME
   Future<Result<Map>> login(String? phone, String password) => musicApiContainer
       .getApi(0)
       .then((musicApi) => musicApi.login(phone, password));
+
+  Future<Result<Map>> signUp(String? phone, String password) =>
+      musicApiContainer
+          .getApi(0)
+          .then((musicApi) => musicApi.signUp(phone, password));
 
   Future<Result<User>> getUserDetail(int uid) async {
     final ret = await musicApiContainer

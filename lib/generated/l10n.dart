@@ -160,6 +160,16 @@ class S {
     );
   }
 
+  /// `SignUp`
+  String get signUp {
+    return Intl.message(
+      'Sign Up',
+      name: 'signUp',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `Login to discover your playlists.`
   String get playlistLoginDescription {
     return Intl.message(
@@ -932,6 +942,36 @@ class S {
     );
   }
 
+  /// `Password length must be between 4 and 16`
+  String get passwordLengthBetween4And16 {
+    return Intl.message(
+      'Password length must be between 4 and 16',
+      name: 'passwordLengthBetween4And16',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Please repeat your password`
+  String get pleaseRepeatPassword {
+    return Intl.message(
+      'Please repeat your password',
+      name: 'pleaseRepeatPassword',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Entered passwords differ`
+  String get enteredPasswordsDiffer {
+    return Intl.message(
+      'Entered passwords differ',
+      name: 'enteredPasswordsDiffer',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `Loading...`
   String get loading {
     return Intl.message(
@@ -1248,9 +1288,9 @@ class AppLocalizationDelegate extends LocalizationsDelegate<S> {
 
   List<Locale> get supportedLocales {
     return const <Locale>[
-      Locale.fromSubtags(languageCode: 'en'),
-      Locale.fromSubtags(languageCode: 'pt'),
       Locale.fromSubtags(languageCode: 'zh'),
+      Locale.fromSubtags(languageCode: 'en'),
+      // Locale.fromSubtags(languageCode: 'pt'),
     ];
   }
 

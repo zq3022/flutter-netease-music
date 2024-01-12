@@ -123,7 +123,8 @@ class MobileNavigatorController extends NavigatorController {
       case final NavigationTargetLogin _:
         page = const LoginPage();
       case final NavigationTargetLoginPassword target:
-        page = LoginPasswordPage(phoneNumber: target.phoneNumber);
+        page = LoginPasswordPage(
+            phoneNumber: target.phoneNumber, registered: target.registered);
       case final NavigationTargetArtistDetail target:
         page = ArtistDetailPage(artistId: target.artistId);
       case final NavigationTargetAlbumDetail target:

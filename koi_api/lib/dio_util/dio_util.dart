@@ -112,6 +112,7 @@ class DioUtil {
     ProgressCallback? onReceiveProgress,
   }) async {
     _dio.options.headers['_pathkey'] = pathKey;
+    _dio.options.headers['terminal'] = 31;
     try {
       Response response;
       _dio.options.headers['tenant-id'] = 1;

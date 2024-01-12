@@ -69,10 +69,11 @@ class _LoginByMobile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return LoginPhoneNumberInputWidget(
-      onSubmit: (phone) async {
+      onSubmit: (phone, registered) async {
         final ret = await showDialog<bool>(
           context: context,
-          builder: (context) => _PasswordCheckDialog(phone: phone),
+          builder: (context) =>
+              _PasswordCheckDialog(phone: phone, registered: registered),
         );
         if (ret == true) {
           Navigator.of(context).pop(true);
@@ -83,9 +84,14 @@ class _LoginByMobile extends StatelessWidget {
 }
 
 class _PasswordCheckDialog extends StatelessWidget {
-  const _PasswordCheckDialog({super.key, required this.phone});
+  const _PasswordCheckDialog({
+    super.key,
+    required this.phone,
+    required this.registered,
+  });
 
   final String phone;
+  final bool registered;
 
   @override
   Widget build(BuildContext context) {
@@ -102,6 +108,7 @@ class _PasswordCheckDialog extends StatelessWidget {
           ),
           LoginPasswordWidget(
             phone: phone,
+            registered: registered,
             onVerified: () => Navigator.pop(context, true),
           ),
           const SizedBox(height: 30),

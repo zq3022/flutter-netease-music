@@ -2,6 +2,7 @@ import '../dio_util/dio_method.dart';
 
 final openApis = <String, List<dynamic>>{
   'login': ['/member/auth/login', DioMethod.post],
+  'signUp': ['/member/auth/sign-up', DioMethod.post],
   'refreshToken': ['/member/auth/refresh-token', DioMethod.post],
   'mobileExist': ['/member/auth/mobile-exist', DioMethod.post],
 };

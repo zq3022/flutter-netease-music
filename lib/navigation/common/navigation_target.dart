@@ -90,9 +90,10 @@ class NavigationTargetLogin extends NavigationTarget {
 }
 
 class NavigationTargetLoginPassword extends NavigationTarget {
-  NavigationTargetLoginPassword(this.phoneNumber);
+  NavigationTargetLoginPassword(this.phoneNumber, this.registered);
 
   final String phoneNumber;
+  final bool registered;
 }
 
 class NavigationTargetArtistDetail extends NavigationTarget {

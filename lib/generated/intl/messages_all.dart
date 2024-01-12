@@ -29,12 +29,12 @@ Map<String, LibraryLoader> _deferredLibraries = {
 
 MessageLookupByLibrary? _findExact(String localeName) {
   switch (localeName) {
+    case 'zh':
+      return messages_zh.messages;
     case 'en':
       return messages_en.messages;
     case 'pt':
       return messages_pt.messages;
-    case 'zh':
-      return messages_zh.messages;
     default:
       return null;
   }

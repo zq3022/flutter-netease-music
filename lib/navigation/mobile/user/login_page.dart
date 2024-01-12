@@ -52,9 +52,9 @@ class _BodyLoginWithPhoneNumber extends ConsumerWidget {
       children: [
         const Row(),
         LoginPhoneNumberInputWidget(
-          onSubmit: (phoneNumber) => ref
+          onSubmit: (phoneNumber, registered) => ref
               .read(navigatorProvider.notifier)
-              .navigate(NavigationTargetLoginPassword(phoneNumber)),
+              .navigate(NavigationTargetLoginPassword(phoneNumber, registered)),
         ),
         const SizedBox(height: 20),
         // TextButton(
