@@ -6,6 +6,7 @@ import 'package:music_api/music_api.dart';
 import 'package:netease_api/netease_api.dart';
 import 'package:netease_api/search_type.dart';
 
+import 'dio_util/dio_preferences_provider.dart';
 import 'dio_util/dio_util.dart';
 
 class KoiApi extends MusicApi {
@@ -97,7 +98,7 @@ class KoiApi extends MusicApi {
   ///         false 需要重新登陆
   @override
   Future<bool> refreshLogin() async {
-    final result = await doRequest('/login/refresh');
+    final result = await doRequest('isLogin');
     return result.isValue;
   }
 
@@ -110,7 +111,11 @@ class KoiApi extends MusicApi {
   ///登出,删除本地cookie信息
   @override
   Future<void> logout() async {
+    await doRequest('logout');
     //删除cookie
+    final _preference = PreferencesProvider();
+    await _preference.clearAccess();
+    await _preference.clearRefresh();
     // await _cookieJar.future.then((v) => v.deleteAll());
   }
 

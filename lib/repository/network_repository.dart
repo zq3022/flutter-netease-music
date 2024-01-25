@@ -197,7 +197,7 @@ class NetworkRepository {
     int limit = 1000,
   }) async {
     final ret = await musicApiContainer
-        .getApi(1)
+        .getApi(0)
         .then((musicApi) => musicApi.userPlaylist(
               userId,
               offset: offset,
@@ -217,7 +217,7 @@ class NetworkRepository {
     int s = 5,
   }) async {
     final ret = await musicApiContainer
-        .getApi(1)
+        .getApi(0)
         .then((musicApi) => musicApi.playlistDetail(id, s: s));
     if (ret.isError) {
       return ret.asError!;
@@ -398,10 +398,10 @@ class NetworkRepository {
               .mvSubscribe(mvId, subscribe: subscribe));
 
   Future<bool> refreshLogin() =>
-      musicApiContainer.getApi(1).then((musicApi) => musicApi.refreshLogin());
+      musicApiContainer.getApi(0).then((musicApi) => musicApi.refreshLogin());
 
   Future<void> logout() =>
-      musicApiContainer.getApi(1).then((musicApi) => musicApi.logout());
+      musicApiContainer.getApi(0).then((musicApi) => musicApi.logout());
 
   Future<Result<Map>> login(String? phone, String password) => musicApiContainer
       .getApi(0)
