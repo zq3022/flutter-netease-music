@@ -127,8 +127,8 @@ class KoiApi extends MusicApi {
     int limit = 1000,
   }) async {
     final response = await doRequest(
-      '/user/playlist',
-      {'offset': offset, 'uid': userId, 'limit': limit},
+      'userPlaylist',
+      {'offset': offset, 'limit': limit},
     );
     return _map(response, (result) => UserPlayList.fromJson(result));
   }

@@ -10,7 +10,8 @@ final openApis = <String, List<dynamic>>{
 };
 
 final authApis = <String, List<dynamic>>{
-  'userDetail': ['/member/user/get', DioMethod.get],
+  'userDetail': ['/cf/user/get', DioMethod.get],
+  'userPlaylist': ['/cf/playlist/list', DioMethod.post],
 };
 
 class ApiMapper {
