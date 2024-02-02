@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:async/async.dart';
+import 'package:common_utils/common_utils.dart';
 import 'package:dio/dio.dart';
 import 'package:koi_api/koi_api.dart';
 import 'package:music_api/music_api.dart';
@@ -196,6 +197,7 @@ class NetworkRepository {
     int offset = 0,
     int limit = 1000,
   }) async {
+    LogUtil.e('network_repository.userPlaylist:1');
     final ret = await musicApiContainer
         .getApi(0)
         .then((musicApi) => musicApi.userPlaylist(
@@ -203,6 +205,8 @@ class NetworkRepository {
               offset: offset,
               limit: limit,
             ));
+    LogUtil.e('network_repository.userPlaylist:2:::::$ret');
+    LogUtil.e(ret.isError);
     if (ret.isError) {
       return ret.asError!;
     }
@@ -349,6 +353,7 @@ class NetworkRepository {
     int limit = 30,
     int offset = 0,
   }) async {
+    LogUtil.e('network_repository.personalizedPlaylist::::::1');
     final ret = await musicApiContainer
         .getApi(1)
         .then((musicApi) => musicApi.personalizedPlaylist(

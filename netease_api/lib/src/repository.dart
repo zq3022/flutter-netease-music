@@ -576,6 +576,7 @@ class Repository extends MusicApi {
     api.Answer result;
     try {
       // convert all params to string
+      debugPrint('repository::::::::>>>>>>$path');
       final convertedParams =
           param.map((k, v) => MapEntry(k.toString(), v.toString()));
       result = await api.cloudMusicApi(
@@ -583,6 +584,8 @@ class Repository extends MusicApi {
         parameter: convertedParams,
         cookie: await _loadCookies(),
       );
+      debugPrint('api request: $path $param');
+      LogUtil.e('api response: ${result.status} ${jsonEncode(result.body)}');
     } catch (e, stacktrace) {
       debugPrint('request error : $e \n $stacktrace');
       final result = ErrorResult(e, stacktrace);
@@ -596,8 +599,6 @@ class Repository extends MusicApi {
     }
     assert(
       () {
-        debugPrint('api request: $path $param');
-        LogUtil.e('api response: ${result.status} ${jsonEncode(result.body)}');
         return true;
       }(),
     );

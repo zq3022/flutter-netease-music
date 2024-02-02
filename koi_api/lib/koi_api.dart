@@ -44,7 +44,7 @@ class KoiApi extends MusicApi {
     );
     LogUtil.e('koi_api.login::result::${result.asValue!.value}');
     final json = result.asValue!.value;
-    final userId = json['data']['userId'] as int;
+    final userId = json['userId'] as int;
     LogUtil.e('koi_api.login::userId::$userId');
     return Result.value({
       'code': 200,
@@ -61,7 +61,7 @@ class KoiApi extends MusicApi {
     );
     LogUtil.e('koi_api.login::result::${result.asValue!.value}');
     final json = result.asValue!.value;
-    final userId = json['data']['userId'] as int;
+    final userId = json['userId'] as int;
     LogUtil.e('koi_api.login::userId::$userId');
     return Result.value({
       'code': 200,
@@ -124,11 +124,11 @@ class KoiApi extends MusicApi {
   Future<Result<UserPlayList>> userPlaylist(
     int? userId, {
     int offset = 0,
-    int limit = 1000,
+    int limit = 100,
   }) async {
     final response = await doRequest(
       'userPlaylist',
-      {'offset': offset, 'limit': limit},
+      {'offset': offset, 'limit': limit > 100 ? 100 : limit},
     );
     return _map(response, (result) => UserPlayList.fromJson(result));
   }
@@ -578,8 +578,7 @@ class KoiApi extends MusicApi {
 
     // final value = CellphoneExistenceCheck.fromJson(
     //     {'exist': 0, 'nickname': '111qzh', 'hasPassword': true});
-    final value =
-        CellphoneExistenceCheck.fromJson(result.asValue!.value['data']);
+    final value = CellphoneExistenceCheck.fromJson(result.asValue!.value);
     return Result.value(value);
   }
 
@@ -638,7 +637,7 @@ class KoiApi extends MusicApi {
       onError?.call(error);
       return error;
     }
-    return Result.value(result);
+    return Result.value(result['data']);
   }
 }
 

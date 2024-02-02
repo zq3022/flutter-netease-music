@@ -115,6 +115,8 @@ class NeteaseAccountNotifier extends ChangeNotifier {
     if (result.isValue) {
       final json = result.asValue!.value;
       final userId = json['account']['id'] as int;
+      debugPrint('***********************$json');
+      debugPrint('***********************$userId');
       try {
         await _updateLoginStatus(userId);
       } catch (error, stacktrace) {
