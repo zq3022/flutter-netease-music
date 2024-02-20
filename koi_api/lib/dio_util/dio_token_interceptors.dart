@@ -23,13 +23,13 @@ class DioTokenInterceptors extends QueuedInterceptor {
       }
       return handler.next(options);
     }
-    LogUtil.e('${options.headers['_pathkey']} is notOpen');
+    // LogUtil.e('${options.headers['_pathkey']} is notOpen');
 
     // token
     final tokenStr = (await _preference.getAccess())?.split('|');
     final refreshTokenStr = (await _preference.getRefresh())?.split('|');
-    LogUtil.e(
-        'refresh token dio request..............$tokenStr   $refreshTokenStr');
+    // LogUtil.e(
+    //     'refresh token dio request..............$tokenStr   $refreshTokenStr');
     LogUtil.e('refresh token dio request...............0');
 
     if (tokenStr != null &&

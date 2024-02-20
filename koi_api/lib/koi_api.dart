@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:async/async.dart' show Result, ErrorResult;
 import 'package:common_utils/common_utils.dart';
+import 'temp/dio_cookie.dart';
 import 'package:music_api/music_api.dart';
 import 'package:netease_api/netease_api.dart';
 import 'package:netease_api/search_type.dart';
@@ -116,7 +117,7 @@ class KoiApi extends MusicApi {
     final _preference = PreferencesProvider();
     await _preference.clearAccess();
     await _preference.clearRefresh();
-    // await _cookieJar.future.then((v) => v.deleteAll());
+    // await DioCookie()._cookieJar.future.then((v) => v.deleteAll());
   }
 
   ///PlayListDetail 中的 tracks 都是空数据
@@ -154,7 +155,7 @@ class KoiApi extends MusicApi {
   /// [s] 歌单最近的 s 个收藏者
   @override
   Future<Result<PlayListDetail>> playlistDetail(int id, {int s = 5}) async {
-    final response = await doRequest('/playlist/detail', {'id': '$id', 's': s});
+    final response = await doRequest('playlistDetail', {'id': '$id', 's': s});
     return _map(response, (t) => PlayListDetail.fromJson(t));
   }
 

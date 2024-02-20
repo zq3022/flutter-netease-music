@@ -157,7 +157,7 @@ class DioUtil {
           options: options,
           onSendProgress: onSendProgress,
           onReceiveProgress: onReceiveProgress);
-      LogUtil.e('dio_utils.request::response::$response');
+      // LogUtil.e('dio_utils.request::response::$response');
       return response.data;
     } on DioException {
       rethrow;

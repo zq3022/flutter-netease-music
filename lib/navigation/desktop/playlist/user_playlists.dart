@@ -1,3 +1,6 @@
+import 'dart:convert';
+
+import 'package:common_utils/common_utils.dart';
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart' hide ExpansionPanel, ExpansionPanelList;
 import 'package:flutter_hooks/flutter_hooks.dart';
@@ -78,9 +81,16 @@ class _UserPlaylist extends HookWidget {
 
   @override
   Widget build(BuildContext context) {
-    final created = playlists.where((p) => p.creatorUserId == userId).toList();
-    final subscribed =
-        playlists.where((p) => p.creatorUserId != userId).toList();
+    LogUtil.e('user_playlist.dart:build:::::::::::');
+    LogUtil.e('user_playlist.dart:build:::::::::::$playlists');
+    final created = playlists.where((p) {
+      LogUtil.e('user_playlist.dart:created::$p');
+      return p.creatorUserId == userId;
+    }).toList();
+    final subscribed = playlists.where((p) {
+      LogUtil.e('user_playlist.dart:subscribed::$p');
+      return p.creatorUserId != userId;
+    }).toList();
 
     final createdExpanded = useState(true);
     final subscribedExpanded = useState(true);

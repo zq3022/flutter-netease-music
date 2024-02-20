@@ -99,7 +99,9 @@ class Playlist {
             .map((e) => SubscribersItem.fromJson(e))
             .toList(),
         subscribed: asBool(json, 'subscribed'),
-        creator: Creator.fromJson(asMap(json, 'creator')),
+        creator: Creator.fromJson(
+          asMap(json, 'creator', defaultValue: asMap(json, 'playListCreator')),
+        ),
         tracks:
             asList(json, 'tracks').map((e) => TracksItem.fromJson(e)).toList(),
         trackIds: asList(json, 'trackIds')

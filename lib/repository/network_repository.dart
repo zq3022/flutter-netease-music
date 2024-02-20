@@ -211,9 +211,12 @@ class NetworkRepository {
       return ret.asError!;
     }
     final userPlayList = ret.asValue!.value;
-    return Result.value(
+    LogUtil.e('network_repository.userPlaylist:3:::::${userPlayList.toJson()}');
+    final resultValue = Result.value(
       userPlayList.playlist.map((e) => e.toPlaylistDetail(const [])).toList(),
     );
+    LogUtil.e('network_repository.userPlaylist:4:::::$resultValue');
+    return resultValue;
   }
 
   Future<Result<PlaylistDetail>> playlistDetail(
